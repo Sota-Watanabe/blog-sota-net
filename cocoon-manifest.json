@@ -1,0 +1,24 @@
+{
+"name": "そーたのブログ",
+"short_name": "そーたのブログ",
+"description": "ハマったことをまとめる",
+"start_url": "https://blog.so-ta.net/",
+"display": "minimal-ui",
+"lang": "ja",
+"dir": "auto",
+"orientation": "any",
+"theme_color": "#19448e",
+"background_color": "#ffffff",
+"icons": [
+  {
+    "src": "https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-192x192.png",
+    "type": "image/png",
+    "sizes": "192x192"
+  },
+  {
+    "src": "https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3.png",
+    "type": "image/png",
+    "sizes": "512x512"
+  }
+]
+}

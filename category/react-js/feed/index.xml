@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>React.js  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/react-js/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Sun, 20 Sep 2020 05:16:15 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>React.js  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>react-aceでselectedTextを取得する</title>
+		<link>https://blog.so-ta.net/react-js/react-ace-selectedtext/</link>
+					<comments>https://blog.so-ta.net/react-js/react-ace-selectedtext/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Mon, 06 Jul 2020 07:39:59 +0000</pubDate>
+				<category><![CDATA[React.js]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=433</guid>
+
+					<description><![CDATA[はじめに 現在チームでプログラミングエディタを作成しています. react-aceを利用してエディタ部分を作っているのですがreact.jsなんも知らない初心者なので公式ドキュメント見ても詰まりました&#8230; その [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>現在チームでプログラミングエディタを作成しています.<br />
+react-aceを利用してエディタ部分を作っているのですがreact.jsなんも知らない初心者なので公式ドキュメント見ても詰まりました&#8230;<br />
+そのメモとして記しておきます.</p>
+<h2>やりたいこと</h2>
+<p>タイトルにも書いてあるように選択したテキストを取得します.</p>
+<h2>道のり</h2>
+<h3>公式ドキュメント</h3>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/07/スクリーンショット-2020-07-06-15.55.17.png" alt="" /></p>
+<p>公式ドキュメントにはこんなことが書かれており, よっしゃーとコピペしたらもちろんエラーがでました. 「refs」って誰?って言われました. 僕も同意見です.</p>
+<p>もっと読んでみたらドキュメントにこんな記述があって</p>
+<pre><code>    &lt;AceEditor
+        ref="aceEditor"
+     /&gt;;</code></pre>
+<p>自分のものにはrefがなかったので追加してみましたができませんでした.<br />
+というかそもそもエラーでuseRef()やcreateRef()使えと言われました.<br />
+これ多分僕が全体的な理解をしてないからわかんないんだろうな.<br />
+雲行きが怪しくなってきた&#8230;</p>
+<h3>stack Overflow</h3>
+<p>似たような質問があった! やったぜ!<br />
+React v16.12 +だと</p>
+<pre><code>this.refName = React.createRef();</code></pre>
+<p>refName作って</p>
+<pre><code>     &lt;AceEditor
+        ref={this.refName}
+     /&gt;</code></pre>
+<p>refを指定して</p>
+<pre><code>this.refName.current.editor.getSelectedText()</code></pre>
+<p>で取得できる.</p>
+<p>refを自分で作ってそれを使って繋げてるっぽいな</p>
+<p>ありがとうStack Overflow!</p>
+<h2>最終的なコード</h2>
+<p>今回はクラスコンポーネントではなく, 関数コンポーネントだったのでちょっと実装は変わりましたがこんな感じになりました.</p>
+<pre><code>const myRef = React.createRef();
+    export default function EditArea () {
+
+        const onSelectionChange = () =&gt; {
+
+            const text = myRef.current.editor.getSelectedText();
+            console.log(text);
+
+        };
+        return (
+            &lt;AceEditor
+                onSelectionChange={onSelectionChange}
+                ref={myRef}
+            /&gt;
+        );
+
+}
+</code></pre>
+<p>onSelectionChangeはセレクションが変わったとき, つまりは選択範囲に変化が生じたときに呼ばれます.</p>
+<h3>追記</h3>
+<p>これよりもいいと思われる方法を発見した.<br />
+AceEditor の属性にonLoadというのがあり, それはエディタインスタンスを取得できます.<br />
+具体的には以下の通りです.</p>
+<pre><code>    export default function EditArea () {
+        const editorInstance = "";
+        const onSelectionChange = () =&gt; {
+
+            const text = editorInstance.getSelectedText();
+            console.log(text);
+
+        };
+
+       onLoad = (newEditorInstance) =&gt; {
+           editorInstance = newEditorInstance;
+        }
+        return (
+            &lt;AceEditor
+                onSelectionChange={onSelectionChange}
+                onLoad={onLoad}
+            /&gt;
+        );
+
+    }
+</code></pre>
+<p>エディタインスタンスの作成が終わったらonLoad関数が呼ばれます.<br />
+関数内でeditorInstanceを代入することで準備完了, あとはこのインスタンスの関数から呼び出すだけです.</p>
+<p>ちなみにエディタ全体の文字を取得するのはgetValue()です.</p>
+<h2>おわりに</h2>
+<p>ちょぉぉぉとreact-aceがわかってきた.</p>
+<h2>参考</h2>
+<a rel="noopener" target="_blank" href="https://stackoverflow.com/questions/39107857/how-to-get-the-value-of-react-component-aceeditor" title="How to get the value of react component - AceEditor" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/dd5b2a99d2dd56909519a03477b48be1.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">How to get the value of react component - AceEditor</div><div class="blogcard-snippet external-blogcard-snippet">I am facing the following issue while using AceEditor react component 
+
+I am using AceEditor as user input, after user enters code, he(she) presses the Run </div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=stackoverflow.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">stackoverflow.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://stackoverflow.com/questions/39107857/how-to-get-the-value-of-react-component-aceeditor" title="How to get the value of react component - AceEditor" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/dd5b2a99d2dd56909519a03477b48be1.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">How to get the value of react component - AceEditor</div><div class="blogcard-snippet external-blogcard-snippet">I am facing the following issue while using AceEditor react component 
+
+I am using AceEditor as user input, after user enters code, he(she) presses the Run </div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=stackoverflow.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">stackoverflow.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://github.com/securingsincity/react-ace/blob/master/docs/FAQ.md" title="react-ace/FAQ.md at master · securingsincity/react-ace" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://repository-images.githubusercontent.com/27292141/67db2b00-9b5a-11ea-9493-feb07b462f58" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">react-ace/FAQ.md at master · securingsincity/react-ace</div><div class="blogcard-snippet external-blogcard-snippet">React Ace Component. Contribute to securingsincity/react-ace development by creating an account on GitHub.</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://ace.c9.io/#nav=api&#038;api=editor" title="Ace - The High Performance Code Editor for the Web" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://s0.wordpress.com/mshots/v1/https%3A%2F%2Face.c9.io%2F%23nav%3Dapi%26amp%3Bapi%3Deditor?w=160&#038;h=90" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">Ace - The High Performance Code Editor for the Web</div><div class="blogcard-snippet external-blogcard-snippet"></div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=ace.c9.io" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">ace.c9.io</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://ja.reactjs.org/docs/refs-and-the-dom.html" title="Ref と DOM – React" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/6d24beff447f24869b2bc45eca6b3503.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">Ref と DOM – React</div><div class="blogcard-snippet external-blogcard-snippet">ユーザインターフェース構築のための JavaScript ライブラリ</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=ja.reactjs.org" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">ja.reactjs.org</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/react-js/react-ace-selectedtext/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

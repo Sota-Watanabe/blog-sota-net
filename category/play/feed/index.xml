@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>遊び  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/play/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Sat, 07 Dec 2019 16:18:07 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>遊び  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>パソコンのキーボードからピアノを動かす!</title>
+		<link>https://blog.so-ta.net/play/pc-keyboard-piano/</link>
+					<comments>https://blog.so-ta.net/play/pc-keyboard-piano/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Fri, 06 Dec 2019 13:32:46 +0000</pubDate>
+				<category><![CDATA[遊び]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=282</guid>
+
+					<description><![CDATA[はじめに 大学のイベントでmidiキーボードを使ってなんか作ってくれとの指令を受けたので作ってみました。midiの扱い方の勉強になってよかったです。 材料 ハード ヤマハのDisklavier 自動演奏ピアノ、midiデ [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>大学のイベントでmidiキーボードを使ってなんか作ってくれとの指令を受けたので作ってみました。midiの扱い方の勉強になってよかったです。</p>
+<h2>材料</h2>
+<h3>ハード</h3>
+<ul>
+<li>ヤマハのDisklavier<br />
+自動演奏ピアノ、midiデータ送れば勝手に鍵盤が動く。すげぇ</li>
+<li>Raspberry Pi<br />
+なんと今の御時世に無印のRaspi。初期モデルなのかな?  研究室にあったから使っている。ぜんっぜん情報がなくてたまにハマる。</li>
+</ul>
+<h3>ソフト</h3>
+<ul>
+<li>python3</li>
+</ul>
+<h2>制作物</h2>
+<p>まず、以下のコードでポートを取得します。ここはちょっとハマりました。くわしくは<a target="_blank" href="https://blog.so-ta.net/missing-memo/yamaha-usb-midi-driver-linux/">こちら<span class="fa fa-external-link internal-icon anchor-icon"></span></a></p>
+<pre><code>outport = mido.open_output(&quot;USB Device 0x499:0x2003:USB Device 0x499:0x2003 MIDI 1&quot;)</code></pre>
+<p>次に選択用の画面を作成します。</p>
+<pre><code>screen = pygame.display.set_mode((400, 330))
+pygame.display.set_caption(&quot;keyboard event&quot;)</code></pre>
+<p>この画面を選択している間にキーボードを打つとキーが取得できるようにし ています。</p>
+<pre><code>while true:
+    screen.fill((0, 0, 0))
+    for event in pygame.event.get():</code></pre>
+<p>あとはこのfor文の中でキーボードイベントを取得します。<br />
+くわしくは省きますが、例として以下のコードはキーボードF1を押したときにelifにはいるという流れです。</p>
+<pre><code>elif event.key == K_F1:</code></pre>
+<p>さてキーボードのイベントを取得したあとはピアノを動かします。具体的にはmidiデータを送信します。例えば以下のようなmessageを作成し、send関数で送信するとピアノが動きます。</p>
+<pre><code> msg = Message(&#039;note_on&#039;, note=60)
+ outport.send(msg)</code></pre>
+<p>この場合はnoteナンバー60のドが動きます。<br />
+あとはキーボードのイベントによって条件わけをしてnoteナンバーを変更し、send関数で送信すればOKです。</p>
+<p>以上の知識から機能やらなにやら追加して、できたコードがこちらです。</p>
+<h3>作成したコード</h3>
+<pre><code>import mido
+import time
+import pygame
+import sys
+import random
+import json
+from mido import MidiFile, Message
+from pygame.locals import *
+
+DEFAULT_KEY = 48
+FILE_list = [&quot;like-piano.json&quot;, &quot;lowson-demo.json&quot;]
+
+mode = 0
+long_sound = False
+outport = mido.open_output(&quot;USB Device 0x499:0x2003:USB Device 0x499:0x2003 MIDI 1&quot;)
+table_list = []
+
+def main():
+    global mode, long_sound
+    pygame.init()    # Pygameを初期化
+    screen = pygame.display.set_mode((400, 330))
+    pygame.display.set_caption(&quot;keyboard event&quot;)
+    set_table()
+
+    while True:
+        screen.fill((0, 0, 0)) 
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    long_sound = not long_sound
+                elif event.key == K_F1:
+                    mode = 0
+                elif event.key == K_F2:
+                    mode = 1
+                else:
+                    octave = 0
+                    if mode == 0:
+                        if event.mod &amp; pygame.KMOD_LSHIFT:
+                            octave = octave - 1
+                        if event.mod &amp; pygame.KMOD_RSHIFT:
+                            octave = octave + 1
+                        key = pygame.key.name(event.key)
+                    elif mode == 1:
+                        key = pygame.key.name(event.key)
+                        if event.mod &amp; pygame.KMOD_SHIFT:
+                            key = key.upper()
+                    print(octave)
+                    send_midi(key, octave, &quot;down&quot;)
+            elif event.type == KEYUP:
+                send_midi(key, octave, &quot;up&quot;)
+            pygame.display.update()
+
+def send_midi(key, octave, move):
+    num = key2num(key)
+    if num == None:
+        return
+    num = num + DEFAULT_KEY + 12 * octave
+    if move == &quot;down&quot;:
+        msg = Message(&#039;note_on&#039;, note=num, velocity=90, time=50)
+        outport.send(msg)
+        if long_sound == False:
+            msg = Message(&#039;note_off&#039;, note=num, velocity=90, time=50)
+            outport.send(msg)
+
+    elif move==&quot;up&quot; and long_sound == True:
+        msg = Message(&#039;note_off&#039;, note=num, velocity=0)
+        outport.send(msg)
+        msg = Message(&#039;note_on&#039;, note=num, velocity=0)
+        outport.send(msg)
+
+def key2num(key):
+    if key in table_list[mode]:
+        return table_list[mode][key]
+
+def set_table():
+    for file in FILE_list:
+        with open(file) as f:
+            global table_list
+            table_list.append(json.load(f))
+
+if __name__ == &#039;__main__&#039;:
+   main()
+   outport.close()</code></pre>
+<h3>仕様書っぽいもの</h3>
+<h4>機能: キーボードを押すことでピアノを動かす</h4>
+<h5>仕様:</h5>
+<p>Keyboardには2つのモードがある。ピアノライクモードとmoji2musicモードである。<br />
+デフォルトはピアノライクモードになっている。  </p>
+<h6>ピアノライクモード:</h6>
+<p>名前通り通常のピアノと同じようなキー配置になっている。「asdfghjkl」は 白鍵の「ドレミファソラシドレ」になっている。また「wetyuo」は黒鍵である。この押したキーと動くキーはjsonファイルで指定可能である。また左shiftを押しながら押すと一オクターブ下がり、右shiftを押しながら押すと一オクターブ上がった音が鳴る。  </p>
+<h6>moji2musicモード:</h6>
+<p>これは「SITintamachi」とリズミカルに打つとファミマの音楽になるモードである。このモードでは 「SITintamachi」以外のキーを押しても音がならない。ピアノライクモードと同様、jsonファイルで指定できるので拡張可能である。<br />
+以上の２つのモードはF1(デフォルト)、F2キーを押すことで変更できる。  </p>
+<p>また鍵盤の押し方には2種類あり、単発と連続である。<br />
+デフォルトは単発である。escキーでとトグル式に変更できる。<br />
+単発ではキーを押すと一音が鳴り、終了する。キーを長く、あるいは短く押しても鳴る音は一定期間である。<br />
+連続ではキーを押している間、ピアノのキーも押され続ける。そしてキーを話したときにピアノのキーは離される。<br />
+こちらの方がピアノらしいがバグが存在する。2つ以上のキーを押すと、キーを離した際に全てのキーが離されず、押されっぱなしになってしまう。ただ、時間経過でキーは離される。</p>
+<p>実機で検証してみた結果、midiキーボード(キーは動かない)では音の遅延はなかったが、Disklavier では約0.5秒の遅延が存在する。 </p>
+<h2>おわりに</h2>
+<p>midiを動かせるといろいろできる幅が増えるのでいい経験だったと思う。</p>
+<h3>gitにも載せてあります</h3>
+<a rel="noopener" target="_blank" href="https://github.com/Sota-Watanabe/keyboard" title="GitHub - Sota-Watanabe/keyboard: 大学のイベントで作成したもの" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/be89f6147704f3fc7fcff2623e42d8e4ba5bd9c61be04eea7310b6d3be7d1986/Sota-Watanabe/keyboard" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">GitHub - Sota-Watanabe/keyboard: 大学のイベントで作成したもの</div><div class="blogcard-snippet external-blogcard-snippet">大学のイベントで作成したもの. Contribute to Sota-Watanabe/keyboard development by creating an account on GitHub.</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/play/pc-keyboard-piano/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

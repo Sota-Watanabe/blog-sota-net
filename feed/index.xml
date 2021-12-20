@@ -1,0 +1,1218 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Sat, 12 Dec 2020 10:41:41 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>AWSで静的ウェブサイトを独自(サブ)ドメインのHTTPSで公開した話</title>
+		<link>https://blog.so-ta.net/thesis-site/aws-static-site-sub-domain-https/</link>
+					<comments>https://blog.so-ta.net/thesis-site/aws-static-site-sub-domain-https/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sat, 17 Oct 2020 08:54:26 +0000</pubDate>
+				<category><![CDATA[卒業研究紹介サイト]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=734</guid>
+
+					<description><![CDATA[はじめに 以前、静的ウェブサイトをGitHub Pagesで公開したことがありました。今回はそれのAWSバージョンです。なぜやったかと言われれば、やったことないからやりました。 GitHub Pages に比べ、複雑でい [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<h2>はじめに</h2>
+
+
+
+<p><a target="_blank" href="https://blog.so-ta.net/category/portfolio/">以前、静的ウェブサイトをGitHub Pagesで公開<span class="fa fa-external-link internal-icon anchor-icon"></span></a>したことがありました。今回はそれのAWSバージョンです。なぜやったかと言われれば、やったことないからやりました。</p>
+
+
+
+<p>GitHub Pages に比べ、複雑でいろいろ設定が必要でしたが、面白かったです。AWSがちょっとだけ分かった気がします。</p>
+
+
+
+<h2>AWSでコンテンツを配信するには</h2>
+
+
+
+<p>今回AWSの配信方法についていろいろ調べてみた結果、<a rel="noopener" target="_blank" href="https://dev.classmethod.jp/articles/static-contents-delivery-patterns/">このサイト<span class="fa fa-external-link external-icon anchor-icon"></span></a>が1番いいと思いました。</p>
+
+
+
+<p>最初はS3だけで公開していました。上記のサイトでいう「小結」ですね。ちょっと違うのはDNSを設定することで独自ドメインで公開していました。</p>
+
+
+
+<p>この方法はとっても簡単で素晴らしいのですが、HTTPSができないというのが個人的に許せませんでした。（パフォーマンスもあまりよろしくないそうですが自分のサイトはそこまでアクセスはないので&#8230;）</p>
+
+
+
+<p>なので「横綱」で構築してみました。一応言葉で説明すると、アクセスをRoute 53のAレコードで CloudFrontがある場所を示すという構成です。</p>
+
+
+
+<h2>最終構成</h2>
+
+
+
+<p>最終的にはこのような構成になりました。今回はthesis.so-ta.netというURLにアクセスすると自分が作成したサイトが表示されます。</p>
+
+
+
+<figure class="wp-block-image size-large"><img loading="lazy" width="800" height="450" src="https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-800x450.png" alt="" class="wp-image-740" srcset="https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-800x450.png 800w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-500x281.png 500w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-768x432.png 768w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-1536x864.png 1536w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-120x68.png 120w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-160x90.png 160w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-320x180.png 320w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み.png 1600w" sizes="(max-width: 800px) 100vw, 800px" /></figure>
+
+
+
+<p>開発者 (サイトを作る人) はGitHubにコードを書くだけ。コードを書くと、GitHub Actionsが動き、S3にアップロードされる。S3は変更があったらBuildされるのでここで静的ウェブサイトのデータが完成する。それをCDNであるCloudFrontに置いておくことで速く、負荷分散に強くなる。</p>
+
+
+
+<p>ユーザ(サイトを見る人)側の動きはthesis.so-ta.netをみようとするとまず、Google DomainsのDNSに飛ぶ。Google Domains DNSではthesisというサブドメインはNSレコードでRoute 53に委任してあるので、Route 53にIPアドレスを聞きに行く。Route 53はCloudFrontのIPアドレスを知っているので渡す。IPアドレスが分かったので、ユーザはCloudFrontをみに行き、データを取得する。</p>
+
+
+
+<h2>参考にしたサイト</h2>
+
+
+
+<p>参考にしたサイトを載せておきます。</p>
+
+
+
+<p>大体の手順</p>
+
+
+
+<ul><li><a rel="noopener" target="_blank" href="https://s8a.jp/vue-js-github-aws-s3-auto-deploy">https://s8a.jp/vue-js-github-aws-s3-auto-deploy<span class="fa fa-external-link external-icon anchor-icon"></span></a></li></ul>
+
+
+
+<p>HTTPSにする方法</p>
+
+
+
+<ul><li><a rel="noopener" target="_blank" href="https://dev.classmethod.jp/articles/tls-for-s3-web-hosting-with-cloudfront/">https://dev.classmethod.jp/articles/tls-for-s3-web-hosting-with-cloudfront/<span class="fa fa-external-link external-icon anchor-icon"></span></a></li></ul>
+
+
+
+<p>Google Domainsのサブドメイン をRoute 53に委任する方法</p>
+
+
+
+<ul><li><a rel="noopener" target="_blank" href="https://dev.classmethod.jp/articles/create-subdomain-on-route53/">https://dev.classmethod.jp/articles/create-subdomain-on-route53/<span class="fa fa-external-link external-icon anchor-icon"></span></a></li></ul>
+
+
+
+<p>AWSのコンテンツ配信の方法をまとめたサイト (おすすめ) </p>
+
+
+
+<ul><li><a rel="noopener" target="_blank" href="https://dev.classmethod.jp/articles/static-contents-delivery-patterns/">https://dev.classmethod.jp/articles/static-contents-delivery-patterns/<span class="fa fa-external-link external-icon anchor-icon"></span></a></li></ul>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/thesis-site/aws-static-site-sub-domain-https/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>netlifyのbuild-imageでnodeがインストールできなかった話</title>
+		<link>https://blog.so-ta.net/master-thesis/netlify-buildbot-node/</link>
+					<comments>https://blog.so-ta.net/master-thesis/netlify-buildbot-node/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sun, 11 Oct 2020 08:18:20 +0000</pubDate>
+				<category><![CDATA[修士の研究]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=706</guid>
+
+					<description><![CDATA[はじめに 修士の研究のため、Netlifyのbuild-imageを使おうとしたけど、READMEの通りやってもうまくいかなかったのでメモ やりたいこと ここのREADMEのSTEP1, 2, 3がしたい。 現象 STE [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<h2>はじめに</h2>
+
+
+
+<p>修士の研究のため、Netlifyのbuild-imageを使おうとしたけど、READMEの通りやってもうまくいかなかったのでメモ</p>
+
+
+
+<h2>やりたいこと</h2>
+
+
+
+<p><a rel="noopener" target="_blank" href="https://github.com/netlify/build-image">ここ<span class="fa fa-external-link external-icon anchor-icon"></span></a>のREADMEのSTEP1, 2, 3がしたい。</p>
+
+
+
+<h2>現象</h2>
+
+
+
+<p>STEP1, 2は普通にできる。しかし、STEP3の</p>
+
+
+
+<pre class="wp-block-code bash"><code>/opt/build-bin/build npm run build</code></pre>
+
+
+
+<p>をするとこんな感じでエラーがでる。なんかnodeがインストールできないっぽい。</p>
+
+
+
+<pre class="wp-block-code"><code>buildbot@e759adb8d766:/$ ./opt/build-bin/build 
+Cloning into '/opt/buildhome/repo'...
+done.
+Installing dependencies
+Python version set to 2.7
+Version '12.18.0' not found - try `nvm ls-remote` to browse available versions.
+Failed to install node version '12.18.0'
+buildbot@e759adb8d766:/$ </code></pre>
+
+
+
+<h2>対処までの道のり</h2>
+
+
+
+<p>対処法だけくれ！って人は<a href="#approach">スキップ</a></p>
+
+
+
+<h3>実行しているファイル</h3>
+
+
+
+<p>今回実行しているファイルはコマンドの通り、/opt/build-bin/build</p>
+
+
+
+<p>ただ、このファイルはコンテナを起動する時にローカルからマウントしているファイルです。</p>
+
+
+
+<p>その証拠はSTEP2でコンテナを起動するときの/.test-tools/start-image.shに書いてあります。</p>
+
+
+
+<p>start-image.sh (一部抜粋) </p>
+
+
+
+<pre class="wp-block-code bash"><code>docker run --rm -t -i \
+	-e NODE_VERSION \
+	-e NPM_VERSION \
+	-e RUBY_VERSION \
+	-e YARN_VERSION \
+	-e HUGO_VERSION \
+	-e PHP_VERSION \
+	-e GO_VERSION \
+	-e SWIFT_VERSION \
+	-e PYTHON_VERSION \
+	-v ${REPO_PATH}:/opt/repo \
+	-v ${BASE_PATH}/run-build.sh:/opt/build-bin/build \
+	-v ${BASE_PATH}/run-build-functions.sh:/opt/build-bin/run-build-functions.sh \
+	$NETLIFY_IMAGE /bin/bash</code></pre>
+
+
+
+<p>docker run のvオプションで${BASE_PATH}/run-build.shを/opt/build-bin/buildにマウントしていることがわかる。</p>
+
+
+
+<p>よってrun-build.shをみれば良さそう。</p>
+
+
+
+<h3>run-build.sh でやってること</h3>
+
+
+
+<pre class="wp-block-code"><code>#!/bin/bash
+
+dir="$(dirname "$0")"
+: ${NETLIFY_REPO_URL="/opt/repo"}
+NETLIFY_BUILD_BASE="/opt/buildhome"
+
+cmd=$*
+
+BUILD_COMMAND_PARSER=$(cat &lt;&lt;EOF
+$cmd
+EOF
+)
+
+. "$dir/run-build-functions.sh"
+
+if &#91;&#91; ! -d $NETLIFY_REPO_DIR ]]; then
+  git clone $NETLIFY_REPO_URL $NETLIFY_REPO_DIR
+fi
+cd $NETLIFY_REPO_DIR
+
+: ${NODE_VERSION="12.18.0"}
+: ${RUBY_VERSION="2.7.1"}
+: ${YARN_VERSION="1.22.4"}
+: ${PHP_VERSION="5.6"}
+: ${GO_VERSION="1.14.4"}
+: ${SWIFT_VERSION="5.2"}
+: ${PYTHON_VERSION="2.7"}
+
+echo "Installing dependencies"
+install_dependencies $NODE_VERSION $RUBY_VERSION $YARN_VERSION $PHP_VERSION $GO_VERSION $SWIFT_VERSION $PYTHON_VERSION
+
+echo "Installing missing commands"
+install_missing_commands
+
+echo "Verify run directory"
+set_go_import_path
+
+echo "Executing user command: $cmd"
+eval "$cmd"
+CODE=$?
+
+exit $CODE</code></pre>
+
+
+
+<p>おもにインストールをやってるっぽい。具体的にはinstall_dependenciesでインストールしている。</p>
+
+
+
+<p>install_dependenciesは既存の関数ではなく、<code>. "$dir/run-build-functions.sh"</code></p>
+
+
+
+<p>で定義した関数なのでrun-build-functions.shをみる。</p>
+
+
+
+<p>run-build-functions.sh (一部抜粋)</p>
+
+
+
+<pre class="wp-block-code"><code>  if nvm install --no-progress $NODE_VERSION
+  then
+    NODE_VERSION=$(nvm current)
+    # no echo needed because nvm does that for us
+    export NODE_VERSION=$NODE_VERSION
+
+    if &#91; "$NODE_VERSION" == "none" ]
+    then
+      nvm debug
+      env
+    fi
+  else
+    echo "Failed to install node version '$NODE_VERSION'"
+    exit 1
+  fi</code></pre>
+
+
+
+<p>多分ここだ。エラー文のFailed to ~もあるし。</p>
+
+
+
+<p>nvm install でインストールして失敗してるんだな。なんでだろ。</p>
+
+
+
+<p>エラーログに　nvm ls-remoteしてみてって言われてたから、付け加えてみるか。</p>
+
+
+
+<p>変更後 run-build-functions.sh (一部抜粋)</p>
+
+
+
+<pre class="wp-block-code"><code>  nvm ls-remote &lt;-NEW!!
+  if nvm install --no-progress $NODE_VERSION
+  then
+    NODE_VERSION=$(nvm current)
+    # no echo needed because nvm does that for us
+    export NODE_VERSION=$NODE_VERSION
+
+    if &#91; "$NODE_VERSION" == "none" ]
+    then
+      nvm debug
+      env
+    fi
+  else
+    echo "Failed to install node version '$NODE_VERSION'"
+    exit 1
+  fi</code></pre>
+
+
+
+<p>これでSTEP2, 3 をやってみた。</p>
+
+
+
+<p>結果</p>
+
+
+
+<pre class="wp-block-code"><code>buildbot@db733d62c389:/$ /opt/build-bin/build 
+Cloning into '/opt/buildhome/repo'...
+done.
+Installing dependencies
+Python version set to 2.7
+            N/A
+Version '12.18.0' not found - try `nvm ls-remote` to browse available versions.
+Failed to install node version '12.18.0'
+buildbot@db733d62c389:/$ </code></pre>
+
+
+
+<p>N/A &#8230;         N/A !?</p>
+
+
+
+<h3>コンテナのDNS</h3>
+
+
+
+<p>N/Aってことはコンテナ内から通信できてないってことか？</p>
+
+
+
+<p>通信できているか確認のため、curlをしてみた。</p>
+
+
+
+<pre class="wp-block-code"><code>buildbot@db733d62c389:/$ curl google.com
+curl: (6) Could not resolve host: google.com
+buildbot@db733d62c389:/$ </code></pre>
+
+
+
+<p>DNSが設定できて無いじゃん多分。</p>
+
+
+
+<p><a target="_blank" href="https://blog.so-ta.net/missing-memo/dial-tcp-lookup-index-docker-io-no-make-container/">前も似たようなこと<span class="fa fa-external-link internal-icon anchor-icon"></span></a>があったのでピンときた。</p>
+
+
+
+<p>よってコンテナのDNSを指定すればいいことがわかった。</p>
+
+
+
+<h2 id="approach">対処法</h2>
+
+
+
+<p>test-tools/start-image.shにresolv.confマウントを追加する</p>
+
+
+
+<pre class="wp-block-code"><code>docker run --rm -t -i \
+	-e NODE_VERSION \
+	-e NPM_VERSION \
+	-e RUBY_VERSION \
+	-e YARN_VERSION \
+	-e HUGO_VERSION \
+	-e PHP_VERSION \
+	-e GO_VERSION \
+	-e SWIFT_VERSION \
+	-e PYTHON_VERSION \
+	-v ${REPO_PATH}:/opt/repo \
+	-v ${BASE_PATH}/run-build.sh:/opt/build-bin/build \
+	-v ${BASE_PATH}/run-build-functions.sh:/opt/build-bin/run-build-functions.sh \
+	-v /etc/resolv.conf:/etc/resolv.conf \ &lt;- NEW!!
+	$NETLIFY_IMAGE /bin/bash</code></pre>
+
+
+
+<p>ローカルのresolv.confをコンテナ内にもマウントすることでコンテナもローカルと同じDNSを使えるようになる。これでcurl も問題なく動くようになるし、nodeもちゃんとインストールできるようになる。</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/master-thesis/netlify-buildbot-node/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Googleドメインのサブドメインをgithub Pagesで利用する</title>
+		<link>https://blog.so-ta.net/portfolio/googlo-subdomain-github-pages/</link>
+					<comments>https://blog.so-ta.net/portfolio/googlo-subdomain-github-pages/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sat, 05 Sep 2020 08:57:39 +0000</pubDate>
+				<category><![CDATA[ポートフォリオ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=666</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[
+<p></p>
+
+
+
+<div class="wp-block-group alignfull"><div class="wp-block-group__inner-container">
+<h2>なぜやるか</h2>
+
+
+
+<p><a target="_blank" class="wp-editor-md-post-content-link" href="https://blog.so-ta.net/set-up/react-github-pages-actions/">一個前の記事<span class="fa fa-external-link internal-icon anchor-icon"></span></a>の続きです.<br>github Pagesのドメインはデフォルトでは</p>
+
+
+
+<p>「http(s)://user名.github.io/ repository名」<br>こんなURLになっています. 全然これでもいいんですが, せっかく自分のドメインを持っているので使おうと思います.</p>
+
+
+
+<h2>前提</h2>
+
+
+
+<p>デフォルトのURLでサイトが正しく表示されること</p>
+
+
+
+<h2>手順</h2>
+
+
+
+<h3>github Actionsの設定</h3>
+
+
+
+<p>もしgithub Actionsを使わない場合はこの節をスキップしてください.</p>
+
+
+
+<p>前回作成したymlファイルにwith.cnameを追加します. 内容はデプロイするURL(ここではportfolio.so-ta.net)です.</p>
+
+
+
+<div class="hcb_wrap">
+<pre>name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.0
+        with:
+          node-version: "12.x"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build<br>　　　　　　// 以下を追加↓
+          cname: portfolio.so-ta.net</pre>
+</div>
+
+
+
+<h3>github pagesの設定</h3>
+
+
+
+<p>リポジトリのsettingタブを開き, 下の方にいくとgithub pagesの設定画面があります.<br>そのなかのCustom domainを自分が利用したいURLにしてください.<br>自分は独自ドメイン「so-ta.net」のportfolioというサブドメインを<br>利用したかったので以下のように変更しました.<br><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/09/スクリーンショット-2020-09-05-17.29.06.png" alt=""></p>
+
+
+
+<p>ついでにHTTPSにするためチェックをつけます.<br>チェックできない場合がありますが, これは時間がかかる時があるらしいので待ちましょう.</p>
+
+
+
+<h3>googleドメインの設定</h3>
+
+
+
+<p>次にgoogleドメインの設定をします.<br><a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://domains.google/intl/ja_jp/">ここ<span class="fa fa-external-link external-icon anchor-icon"></span></a>からマイドメインにアクセスし, サイドバーからDNSを開いてください.<br>DNSの1番下にカスタムリソースコードの設定画面があると思います.<br>CNAMEレコードでサブドメインと転送先のドメイン名を入力してください.<br>転送先ドメインは自分のgithub.ioです.</p>
+
+
+
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/09/スクリーンショット-2020-09-05-17.37.05-1.png" alt=""><br>これで指定のURL(今回はportfolio.so-ta.net)にきた際にgithubのドメインに転送することができました.</p>
+
+
+
+<h3>package.jsonの設定</h3>
+
+
+
+<p>最後にpackage.jsonを以下のようにすればOKです.</p>
+
+
+
+<pre class="wp-block-code json"><code>"homepage": "https://portfolio.so-ta.net/"</code></pre>
+
+
+
+<div class="wp-block-group"><div class="wp-block-group__inner-container"></div></div>
+
+
+
+<p></p>
+
+
+
+<h2>参考</h2>
+
+
+
+
+<a rel="noopener" target="_blank" href="https://mae.chab.in/archives/60095" title="GitHub Pagesに独自ドメインを設定してHTTPS化する" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/0f0ac3bf0ae27b4488e6d9bda1624f66.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">GitHub Pagesに独自ドメインを設定してHTTPS化する</div><div class="blogcard-snippet external-blogcard-snippet">5月1日のThe Github blogで「Custom domains on GitHub Pages gain support for HTTPS」という記事が投稿されました。何の話かというと独自...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=mae.chab.in" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">mae.chab.in</div></div></div></div></a>
+
+
+
+
+<p></p>
+</div></div>
+
+
+
+<p></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/portfolio/googlo-subdomain-github-pages/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Reactアプリをgithub Pages, Actionsでデプロイ</title>
+		<link>https://blog.so-ta.net/portfolio/react-github-pages-actions/</link>
+					<comments>https://blog.so-ta.net/portfolio/react-github-pages-actions/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Fri, 04 Sep 2020 14:30:34 +0000</pubDate>
+				<category><![CDATA[ポートフォリオ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=628</guid>
+
+					<description><![CDATA[やりたいこと feature/〜ブランチつくってdevelopブランチにプルリク, ある程度まとまったらdevelopブランチをmasterへプルリクして開発したい. そのときmasterの変更があったときにだけgith [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>やりたいこと</h2>
+<p>feature/〜ブランチつくってdevelopブランチにプルリク, ある程度まとまったらdevelopブランチをmasterへプルリクして開発したい.<br />
+そのときmasterの変更があったときにだけgithub Actionsでビルド, 出力をgithub pagesでホスティングしたい.</p>
+<h3>なぜやるか</h3>
+<p>正直, ポートフォリオみたいに一人かつ複雑ではないものを作るだけならこんな遠回りしなくても普通に<a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://qiita.com/yuitnnn/items/11375ea29ec023d19fdf">こんな感じ<span class="fa fa-external-link external-icon anchor-icon"></span></a>で直接masterブランチにプッシュすればいい.<br />
+<del>でもやっぱりいつかチーム開発にはもちろんこんな感じになるし多分, あとCI/CDを意識した方が今後役に立つから&#8230;</del></p>
+<h1>github Actionsとgithub pages使ってみたかったし,</h1>
+<h1>なによりかっこいいのでやりました.</h1>
+<h2>前提</h2>
+<p>react-create-appでアプリを作っている前提とします.<br />
+今回やるのはmasterブランチに変更があったらデプロイされるところまでです.</p>
+<h2>手順</h2>
+<h3>ビルドの確認</h3>
+<pre><code class="language-bash line-numbers">npm run start
+npm run build
+</code></pre>
+<p>コマンドを実行してlocalhostで動くか確認と正しくビルドできるかの確認をしましょう. CI/CDの部分を作るのにそれ以前の問題になってしまいます.<br />
+なぜこんな初歩的なことを言うのかというと僕がこれを怠ったため時間を無駄にしてしまったからです. ちゃんと確認しましょう.</p>
+<h4>具体的な確認</h4>
+<ul>
+<li>localhost:3000に意図しているページが表示されているか.</li>
+<li>buildコマンドで/buildディレクトリが作成され, 中にそれっぽいものが入っているか</li>
+</ul>
+<p>確認が終わったらmasterへプッシュしてしまいましょう.</p>
+<h3>github Actionsのymlを書く</h3>
+<p>/.github/workflows/ディレクトリの中にymlファイルを書くとgithub君はgithub Actionsとして認識してくれます.<br />
+以下は僕が作成したものです.</p>
+<pre><code class="language-yaml line-numbers">name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.0
+        with:
+          node-version: "12.x"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+</code></pre>
+<h4>やってること</h4>
+<ol>
+<li>masterブランチがpushされたときにイベント発火</li>
+<li>ubuntu環境をセット, npm もいれる</li>
+<li>npm ci でパッケージをインストール</li>
+<li>npm run buildでビルド, 出力はデフォルトで./buildへ吐き出される</li>
+<li>./buildにあるファイルをgh-pagesブランチにコミット</li>
+</ol>
+<p>それではファイルをmasterにpushしてください.<br />
+するとgithub Actionsが動いているはずです.</p>
+<h3>github上の設定</h3>
+<p>最後にgithub pagesの設定を行います.<br />
+リポジトリのsettingタブを開いてください. 下の方にgithub pagesの設定項目があります.</p>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/09/スクリーンショット-2020-09-04-22.02.47.png" alt="" /><br />
+先ほどのgithub Actionsでgh-pagesブランチができているはずなのでそれを選択してください.</p>
+<p>すると画像の緑の部分のようにメッセージがでます.<br />
+そのURLがデプロイ先になりますが, まだ正常なページが表示されません.</p>
+<h3>package.jsonにhomepageを追加</h3>
+<p>package.jsonに以下の記述を追加してください</p>
+<pre><code class="language-json line-numbers">"homepage": "デプロイ先のURL"
+</code></pre>
+<p>デプロイ先のURLは先ほど確認した緑の部分に表示されているURLにしてください. これがないとcssなどが404になってしまいます.</p>
+<h3>さいごに</h3>
+<p>勝手にデプロイされるのってなんかいいですね.<br />
+あと独自ドメインでホスティングする方法は別記事に書きます.</p>
+<h2>参考</h2>
+<a rel="noopener" target="_blank" href="https://github.com/peaceiris/actions-gh-pages" title="GitHub - peaceiris/actions-gh-pages: GitHub Actions for GitHub Pages 🚀 Deploy static files and publish your site easily. Static-Site-Generators-friendly." class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://repository-images.githubusercontent.com/187915200/5dcf0d00-3bf8-11ea-9009-37da036f4f6b" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">GitHub - peaceiris/actions-gh-pages: GitHub Actions for GitHub Pages 🚀 Deploy static files and publish your site easily. Static-Site-Generators-friendly.</div><div class="blogcard-snippet external-blogcard-snippet">GitHub Actions for GitHub Pages 🚀 Deploy static files and publish your site easily. Static-Site-Generators-friendly. - GitHub - peaceiris/actions-gh-pages: GitH...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/portfolio/react-github-pages-actions/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>electronでRedux DevToolsを使う!</title>
+		<link>https://blog.so-ta.net/xenontext/electron-redux-devtools/</link>
+					<comments>https://blog.so-ta.net/xenontext/electron-redux-devtools/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Wed, 19 Aug 2020 13:07:58 +0000</pubDate>
+				<category><![CDATA[XenonText]]></category>
+		<category><![CDATA[React.js]]></category>
+		<category><![CDATA[redux]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=582</guid>
+
+					<description><![CDATA[はじめに electron と Reduxを使ってエディタを作成しているんですが, やっぱり動的にReduxを操作したいってことでRedux DevTools Extension を使用することにしました. ついでにRe [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>electron と Reduxを使ってエディタを作成しているんですが,<br />
+やっぱり動的にReduxを操作したいってことでRedux DevTools Extension<br />
+を使用することにしました. ついでにReactのDevToolsも入れます.<br />
+electronを使った場合が日本語であまりなかったので紹介します.</p>
+<h2>前提</h2>
+<p>electron, Reduxを使っている前提とします(当然ですが)</p>
+<h2>手順</h2>
+<p>まず, <a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://github.com/MarshallOfSound/electron-devtools-installer">electron-devtools-installer<span class="fa fa-external-link external-icon anchor-icon"></span></a>を入れましょう.</p>
+<pre><code class="language-bash line-numbers">npm install electron-devtools-installer --save-dev
+</code></pre>
+<p>or</p>
+<pre><code class="language-bash line-numbers">yarn add electron-devtools-installer -D
+</code></pre>
+<p>次にメインプロセスの部分に以下のように追加します.</p>
+<pre><code class="language-javascript line-numbers">//index.js
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} from 'electron-devtools-installer';
+
+...
+...
+...
+//electronを起動時にDevToolsを開く(これ便利だからおすすめ)
+win.webContents.openDevTools();
+
+installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+.then((name) =&gt; console.log(name))
+.catch((err) =&gt; console.log(err));
+</code></pre>
+<p>これで以下のようにReduxとReactのDevToolsが入りました!</p>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/redux_tab.png" alt="" /></p>
+<p>しかしReduxの方をみてみるとなんか言われています&#8230;<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/no_store.png" alt="" /><br />
+「ストアがみつかんないよ!!」</p>
+<p>というわけでストアを接続してあげましょう.</p>
+<p>ストアを作成しているところをみてください.<br />
+一般にcreateStore関数があるところです.</p>
+<pre><code class="language-javascript line-numbers"> const store = createStore(
+   reducer,
+   // 以下を追加
+   window.__REDUX_DEVTOOLS_EXTENSION__&amp;&amp; window.__REDUX_DEVTOOLS_EXTENSION__()
+ );
+</code></pre>
+<p>window〜を追加してください. これでストアを接続できました.</p>
+<h3>とらゼミの場合</h3>
+<p>この節はトラハックのエンジニア学習ゼミ【とらゼミ】の<a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://www.youtube.com/watch?v=FBMA34gUsgw&amp;list=PLX8Rsrpnn3IWavNOj3n4Vypzwb3q1RXhr">日本一わかりやすいReact-Redux入門<br />
+<span class="fa fa-external-link external-icon anchor-icon"></span></a>で勉強した方向けになります. 対象でない方はスキップしてください. m(_ _)m</p>
+<p>とらゼミではreduxのcreateStoreをreduxCreateStoreという名前でimportしていました.</p>
+<pre><code class="language-javascript line-numbers">//store.js
+import { combineReducers, createStore as reduxCreateStore } from 'redux';
+import EditorReducer from '../editor/reducers';
+
+export default function createStore() {
+  return reduxCreateStore(
+    combineReducers({
+      editor: EditorReducer,
+    }),
+      // 以下に追加
+    window.__REDUX_DEVTOOLS_EXTENSION__ &amp;&amp;
+      window.__REDUX_DEVTOOLS_EXTENSION__(),
+  );
+}
+
+</code></pre>
+<p>これはなぜかというと他の場所(index.jsx)でcreateStore関数をつかってストアを作成したかったからです.<br />
+よってwindow〜を追加する場所は上記のようにstore.jsの中になります.</p>
+<h2>結果</h2>
+<p>以下のようになったら完了です.<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/スクリーンショット-2020-08-19-0.35.43.png" alt="" /></p>
+<h2>おわりに</h2>
+<p>Let&#8217;s Redux!!</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/xenontext/electron-redux-devtools/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>gatsbyのチュートリアル3ができない</title>
+		<link>https://blog.so-ta.net/missing-memo/gatsby-tutorial-3-error/</link>
+					<comments>https://blog.so-ta.net/missing-memo/gatsby-tutorial-3-error/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Fri, 31 Jul 2020 13:52:17 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=538</guid>
+
+					<description><![CDATA[はじめに gatsbyに入門しようとチュートリアルを進めていたら予想外のところでエラーがでたのでその現象と解決策を共有します. 現象 gatsbyのチュートリアルPART3をやっていました. いろいろjsを書き, チュー [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>gatsbyに入門しようとチュートリアルを進めていたら予想外のところでエラーがでたのでその現象と解決策を共有します. </p>
+<h2>現象</h2>
+<p><a rel="noopener" target="_blank" href="https://www.gatsbyjs.org/tutorial/part-three/#-install-and-configure-gatsby-plugin-typography">gatsbyのチュートリアルPART3<span class="fa fa-external-link external-icon anchor-icon"></span></a>をやっていました.<br />
+いろいろjsを書き, チュートリアル通りに</p>
+<pre><code>gatsby develop</code></pre>
+<p>とするとreactがないと怒られました. あれ? なんで? と思いながらもnpm install すれば治るでしょと</p>
+<pre><code>npm install
+gatsby develop</code></pre>
+<p>すると</p>
+<pre><code>ERROR
+
+The above error occurred in the &amp;lt;StoreStateProvider&amp;gt; component:
+    in StoreStateProvider
+    in App
+
+React will try to recreate this component tree from scratch using the error boundary you provided, App.
+
+ ERROR
+
+Warning: App: Error boundaries should implement getDerivedStateFromError(). In that method, return a state update to display an error message or fallback UI.
+
+ ERROR
+
+UNHANDLED REJECTION Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
+
+  Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for o  ne of the following reasons:
+  1. You might have mismatching versions of React and the renderer (such as React DOM)
+  2. You might be breaking the Rules of Hooks
+  3. You might have more than one copy of React in the same app
+  See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
+
+...</code></pre>
+<p>となりました&#8230;<br />
+チュートリアル通りやったのになんでだー!</p>
+<h2>道のり</h2>
+<p>軽く調べて同じような方がいたので<br />
+対処法としてnode_modulesを削除してnpm installすれば治るらしいのでやってみたんですが治りませんでした&#8230;</p>
+<h3>解決方法</h3>
+<p>yarnでやるのがいいそうです. </p>
+<a rel="noopener" target="_blank" href="https://github.com/gatsbyjs/gatsby/issues/19064#issuecomment-650795538" title="install gatsby-transformer-remark breaks &#039;gatsby develop&#039; · Issue #19064 · gatsbyjs/gatsby" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/c18c38f091a47334c2b7280a878c541578d2405a587075276bfc3c3e7e357cb1/gatsbyjs/gatsby/issues/19064" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">install gatsby-transformer-remark breaks 'gatsby develop' · Issue #19064 · gatsbyjs/gatsby</div><div class="blogcard-snippet external-blogcard-snippet">When I install gatsby-transformer-remark it breaks the development environment for that site. Tried this 3 times from a fresh install using npm. 1 - Install new...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+<pre><code>rm  package-lock.json
+yarn install
+gatsby develop</code></pre>
+<h2>おわりに</h2>
+<p>これからgatsby頑張るぞー</p>
+<h2>参考文献</h2>
+<a rel="noopener" target="_blank" href="https://github.com/gatsbyjs/gatsby/issues/19064" title="install gatsby-transformer-remark breaks &#039;gatsby develop&#039; · Issue #19064 · gatsbyjs/gatsby" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/c18c38f091a47334c2b7280a878c541578d2405a587075276bfc3c3e7e357cb1/gatsbyjs/gatsby/issues/19064" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">install gatsby-transformer-remark breaks 'gatsby develop' · Issue #19064 · gatsbyjs/gatsby</div><div class="blogcard-snippet external-blogcard-snippet">When I install gatsby-transformer-remark it breaks the development environment for that site. Tried this 3 times from a fresh install using npm. 1 - Install new...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://github.com/gatsbyjs/gatsby/issues/21990" title="docs(tutorial): tutorial/part-three  -&gt; walkthrough failing if yarn is selected as packageManager · Issue #21990 · gatsbyjs/gatsby" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/d51955a423b1ee9dd6acb630bf02994fd7a1f19ca403a257854013914302f680/gatsbyjs/gatsby/issues/21990" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">docs(tutorial): tutorial/part-three  -> walkthrough failing if yarn is selected as packageManager · Issue #21990 · gatsbyjs/gatsby</div><div class="blogcard-snippet external-blogcard-snippet">Summary when the packageManager in ~/.config/gatsby/config.json set to yarn then the walkthrough failing (see related issues) Basic example Possible changes and...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/gatsby-tutorial-3-error/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>【独断】dockerの1番便利な使い方!!!</title>
+		<link>https://blog.so-ta.net/docker/best-useful-method/</link>
+					<comments>https://blog.so-ta.net/docker/best-useful-method/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Wed, 08 Jul 2020 10:45:19 +0000</pubDate>
+				<category><![CDATA[docker]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=419</guid>
+
+					<description><![CDATA[はじめに dockerにはいろいろな使い方があります. 常につけっぱにするサーバとしてだったり, 仲間と全く同じの環境を作成するためだったり, 色々です. しかし一方で「サーバ？別にレンタルサーバだから要らないし&#82 [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>dockerにはいろいろな使い方があります. 常につけっぱにするサーバとしてだったり, 仲間と全く同じの環境を作成するためだったり, 色々です.</p>
+<p>しかし一方で「サーバ？別にレンタルサーバだから要らないし&#8230;」「チーム開発あんまりやらない」という人もいると思います.</p>
+<p>今回はdocker歴1年の僕が1番便利だと感じたdockerの使い方について紹介します.</p>
+<p>この方法は誰でも使う余地があると思いますので是非, 試してみてください!!</p>
+<h2>環境</h2>
+<p>windows Linux MacOS &#8230; dockerが動く環境全て</p>
+<h2>目的</h2>
+<p>&#8230;で前振りはいいから結局何すんの?って話なんですが,<br />
+dockerでほぼ全ての環境を構築をしましょう.</p>
+<p>それこそ最近はオンライン授業で自分のPCに環境を作ってくださいとか言われるかもしれません.<br />
+そういう先生に是非言いたい! dockerでやりましょうと.</p>
+<p>ということで今回はdockerで環境構築をするのが目的です.<br />
+具体例をみていきましょう.</p>
+<h2>使い方</h2>
+<h3>ストーリー</h3>
+<p>授業でC言語のプログラムを作ってこいと言われた<br />
+C言語の環境ってどうやるの? gcc?なにそれ, 怖いから直接PCに入れたくない!<br />
+そこでdockerです.</p>
+<pre><code class="language-bash line-numbers">docker run --rm -it -v $PWD:/workdir gcc bash
+</code></pre>
+<p>このコマンドを打つだけでC言語が動く環境ができました!</p>
+<h3>手順</h3>
+<h4>コンテナイメージを決定する</h4>
+<p>まず, 利用するコンテナイメージをググって決定します.<br />
+僕は以下のイメージをよく利用しています.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">言語</th>
+<th style="text-align: center;">イメージ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">C言語</td>
+<td style="text-align: center;">gcc</td>
+</tr>
+<tr>
+<td style="text-align: center;">java</td>
+<td style="text-align: center;">openjdk</td>
+</tr>
+<tr>
+<td style="text-align: center;">python</td>
+<td style="text-align: center;">python</td>
+</tr>
+<tr>
+<td style="text-align: center;">Go言語</td>
+<td style="text-align: center;">golang</td>
+</tr>
+</tbody>
+</table>
+<h4>コンテナを起動する</h4>
+<p>先に見たコマンドを使ってコンテナを起動しましょう.<br />
+今回はカレントディレクトリと/workdirをマウントしてgccイメージのコンテナを起動します.</p>
+<pre><code class="language-bash line-numbers">docker run --rm -it -v $PWD:/workdir gcc bash
+</code></pre>
+<h4>コンテナ内で操作する</h4>
+<p>コマンドを打つとコンテナ内に入れたと思います.<br />
+それでは「cd /workdir」で正しくマウントできているか確認してください.<br />
+あとは通常通り操作するだけです. 例としてgccの場合は以下のようにして実行します.</p>
+<pre><code class="language-bash line-numbers">gcc &lt;ファイル名&gt;.c &amp;&amp; ./a.out
+</code></pre>
+<p>使い終わったら</p>
+<pre><code class="language-bash line-numbers">exit
+</code></pre>
+<p>でコンテナから出ます.</p>
+<p>それでは利用したコマンドについて説明していきます.</p>
+<h2>解説</h2>
+<p>このコマンドでやっていることは大きく分けて5つです.</p>
+<ol>
+<li>イメージを指定してコンテナ起動</li>
+<li>終了時コンテナ自動破棄オプション</li>
+<li>コンテナ内を操作するオプション</li>
+<li>マウントオプション</li>
+<li>シェルの指定</li>
+</ol>
+<p>それぞれ見ていきましょう!</p>
+<h3>イメージを指定してコンテナ起動</h3>
+<pre><code>docker run <コンテナイメージ></code></pre>
+<p>コンテナイメージを指定してコンテナを起動します.<br />
+コンテナイメージとはコンテナを作成するときの元となるものです.<br />
+よくクラスとインスタンスの関係で例えられます.</p>
+<ul>
+<li>クラス -> コンテナイメージ</li>
+<li>インスタンス -> コンテナ</li>
+</ul>
+<p>またコンテナイメージがローカルにない場合は自動でdocker hubからpullします.</p>
+<h3>終了時コンテナ自動破棄オプション(&#8211;rm)</h3>
+<pre><code>docker run --rm <コンテナイメージ></code></pre>
+<p>コンテナがストップしたときに, 自動でコンテナとコンテナに関連するvolumeを削除するというオプションです. これがないとコンテナを破棄してもvolumeの繋がりが残ってしまい, 無駄にメモリ消費を消費してしまうことがあります.</p>
+<h3>コンテナ内を操作するオプション(-it)</h3>
+<pre><code>docker run -it <コンテナイメージ></code></pre>
+<p>正確にはiオプションが標準入力を開けるもの, tオプションが擬似端末を割り当てるオプションです.<br />
+しかし実際ほとんど一緒に使われるので -it でコンテナ操作できるオプションと覚えていいと思います.</p>
+<h3>マウントオプション(-v)</h3>
+<pre><code>docker run -v $PWD:/workdir <コンテナイメージ></code></pre>
+<p>ホストOSのディレクリとコンテナ内のディレクトリをつなげるオプションです.<br />
+この例だと$PWDとコンテナ内のルートディレクトリにあるworkdirディレクトリを繋げます.<br />
+$PWDはprint working directoryの略で今開いているディレクトリへのパスです.<br />
+具体的になんなの?という人は端末を開いて「echo $PWD」と打って試してみてください.</p>
+<h3>コンテナ内を操作するシェル指定(bash)</h3>
+<pre><code>docker run -it <コンテナイメージ> bash</code></pre>
+<p>itオプションで開くときのシェルをbashに指定します.</p>
+<h2>おわりに</h2>
+<p>dockerを使えば簡単に環境構築ができます.<br />
+是非, お試しあれ!!</p>
+<h2>参考</h2>
+<a rel="noopener" target="_blank" href="https://www.docker.com/" title="Empowering App Development for Developers | Docker" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/de71493281044d99204e6c61e2742e2a.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">Empowering App Development for Developers | Docker</div><div class="blogcard-snippet external-blogcard-snippet">Learn how Docker helps developers bring their ideas to life by conquering the complexity of app development.</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=www.docker.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">www.docker.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://stlisacity.hatenablog.com/entry/2018/09/10/145101" title="DockerのVolumeに関して -v --rm -d ゴミが残る問題 コンテナが起動しない - ちょこっとプログラミング" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/a48380381db6e68f2a5becb385002176.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">DockerのVolumeに関して -v --rm -d ゴミが残る問題 コンテナが起動しない - ちょこっとプログラミング</div><div class="blogcard-snippet external-blogcard-snippet">最近Dockerを使い始めたのですが、一つ躓いたのでメモ。Dockerのコンテナを立上げる時、コンテナとは別に実は裏でボリュームと言う物も立ち上がっています。 （立上げる時に使うイメージによって違うかもしれませんがMysqlを立上げたら勝手に立ち上がるのは確認済みです） イメージ的にはこんな感じです: 公式ドキュメント...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=stlisacity.hatenablog.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">stlisacity.hatenablog.com</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/docker/best-useful-method/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>react-aceでselectedTextを取得する</title>
+		<link>https://blog.so-ta.net/react-js/react-ace-selectedtext/</link>
+					<comments>https://blog.so-ta.net/react-js/react-ace-selectedtext/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Mon, 06 Jul 2020 07:39:59 +0000</pubDate>
+				<category><![CDATA[React.js]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=433</guid>
+
+					<description><![CDATA[はじめに 現在チームでプログラミングエディタを作成しています. react-aceを利用してエディタ部分を作っているのですがreact.jsなんも知らない初心者なので公式ドキュメント見ても詰まりました&#8230; その [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>現在チームでプログラミングエディタを作成しています.<br />
+react-aceを利用してエディタ部分を作っているのですがreact.jsなんも知らない初心者なので公式ドキュメント見ても詰まりました&#8230;<br />
+そのメモとして記しておきます.</p>
+<h2>やりたいこと</h2>
+<p>タイトルにも書いてあるように選択したテキストを取得します.</p>
+<h2>道のり</h2>
+<h3>公式ドキュメント</h3>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/07/スクリーンショット-2020-07-06-15.55.17.png" alt="" /></p>
+<p>公式ドキュメントにはこんなことが書かれており, よっしゃーとコピペしたらもちろんエラーがでました. 「refs」って誰?って言われました. 僕も同意見です.</p>
+<p>もっと読んでみたらドキュメントにこんな記述があって</p>
+<pre><code>    &lt;AceEditor
+        ref="aceEditor"
+     /&gt;;</code></pre>
+<p>自分のものにはrefがなかったので追加してみましたができませんでした.<br />
+というかそもそもエラーでuseRef()やcreateRef()使えと言われました.<br />
+これ多分僕が全体的な理解をしてないからわかんないんだろうな.<br />
+雲行きが怪しくなってきた&#8230;</p>
+<h3>stack Overflow</h3>
+<p>似たような質問があった! やったぜ!<br />
+React v16.12 +だと</p>
+<pre><code>this.refName = React.createRef();</code></pre>
+<p>refName作って</p>
+<pre><code>     &lt;AceEditor
+        ref={this.refName}
+     /&gt;</code></pre>
+<p>refを指定して</p>
+<pre><code>this.refName.current.editor.getSelectedText()</code></pre>
+<p>で取得できる.</p>
+<p>refを自分で作ってそれを使って繋げてるっぽいな</p>
+<p>ありがとうStack Overflow!</p>
+<h2>最終的なコード</h2>
+<p>今回はクラスコンポーネントではなく, 関数コンポーネントだったのでちょっと実装は変わりましたがこんな感じになりました.</p>
+<pre><code>const myRef = React.createRef();
+    export default function EditArea () {
+
+        const onSelectionChange = () =&gt; {
+
+            const text = myRef.current.editor.getSelectedText();
+            console.log(text);
+
+        };
+        return (
+            &lt;AceEditor
+                onSelectionChange={onSelectionChange}
+                ref={myRef}
+            /&gt;
+        );
+
+}
+</code></pre>
+<p>onSelectionChangeはセレクションが変わったとき, つまりは選択範囲に変化が生じたときに呼ばれます.</p>
+<h3>追記</h3>
+<p>これよりもいいと思われる方法を発見した.<br />
+AceEditor の属性にonLoadというのがあり, それはエディタインスタンスを取得できます.<br />
+具体的には以下の通りです.</p>
+<pre><code>    export default function EditArea () {
+        const editorInstance = "";
+        const onSelectionChange = () =&gt; {
+
+            const text = editorInstance.getSelectedText();
+            console.log(text);
+
+        };
+
+       onLoad = (newEditorInstance) =&gt; {
+           editorInstance = newEditorInstance;
+        }
+        return (
+            &lt;AceEditor
+                onSelectionChange={onSelectionChange}
+                onLoad={onLoad}
+            /&gt;
+        );
+
+    }
+</code></pre>
+<p>エディタインスタンスの作成が終わったらonLoad関数が呼ばれます.<br />
+関数内でeditorInstanceを代入することで準備完了, あとはこのインスタンスの関数から呼び出すだけです.</p>
+<p>ちなみにエディタ全体の文字を取得するのはgetValue()です.</p>
+<h2>おわりに</h2>
+<p>ちょぉぉぉとreact-aceがわかってきた.</p>
+<h2>参考</h2>
+<a rel="noopener" target="_blank" href="https://stackoverflow.com/questions/39107857/how-to-get-the-value-of-react-component-aceeditor" title="How to get the value of react component - AceEditor" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/dd5b2a99d2dd56909519a03477b48be1.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">How to get the value of react component - AceEditor</div><div class="blogcard-snippet external-blogcard-snippet">I am facing the following issue while using AceEditor react component 
+
+I am using AceEditor as user input, after user enters code, he(she) presses the Run </div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=stackoverflow.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">stackoverflow.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://stackoverflow.com/questions/39107857/how-to-get-the-value-of-react-component-aceeditor" title="How to get the value of react component - AceEditor" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/dd5b2a99d2dd56909519a03477b48be1.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">How to get the value of react component - AceEditor</div><div class="blogcard-snippet external-blogcard-snippet">I am facing the following issue while using AceEditor react component 
+
+I am using AceEditor as user input, after user enters code, he(she) presses the Run </div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=stackoverflow.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">stackoverflow.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://github.com/securingsincity/react-ace/blob/master/docs/FAQ.md" title="react-ace/FAQ.md at master · securingsincity/react-ace" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://repository-images.githubusercontent.com/27292141/67db2b00-9b5a-11ea-9493-feb07b462f58" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">react-ace/FAQ.md at master · securingsincity/react-ace</div><div class="blogcard-snippet external-blogcard-snippet">React Ace Component. Contribute to securingsincity/react-ace development by creating an account on GitHub.</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://ace.c9.io/#nav=api&#038;api=editor" title="Ace - The High Performance Code Editor for the Web" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://s0.wordpress.com/mshots/v1/https%3A%2F%2Face.c9.io%2F%23nav%3Dapi%26amp%3Bapi%3Deditor?w=160&#038;h=90" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">Ace - The High Performance Code Editor for the Web</div><div class="blogcard-snippet external-blogcard-snippet"></div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=ace.c9.io" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">ace.c9.io</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://ja.reactjs.org/docs/refs-and-the-dom.html" title="Ref と DOM – React" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/6d24beff447f24869b2bc45eca6b3503.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">Ref と DOM – React</div><div class="blogcard-snippet external-blogcard-snippet">ユーザインターフェース構築のための JavaScript ライブラリ</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=ja.reactjs.org" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">ja.reactjs.org</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/react-js/react-ace-selectedtext/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Mac で一方向に言語を切り替える</title>
+		<link>https://blog.so-ta.net/set-up/mac-change-language/</link>
+					<comments>https://blog.so-ta.net/set-up/mac-change-language/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Wed, 15 Apr 2020 11:52:30 +0000</pubDate>
+				<category><![CDATA[環境構築]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=402</guid>
+
+					<description><![CDATA[はじめに コロナの影響で大学にいけないため, Macを使うことになったのですが, 前の記事のような入力切り替えにしたい&#8230; Mac初心者なのでアドバイスなどがあればよろしくお願いします&#8230; 環境 ma [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>コロナの影響で大学にいけないため, Macを使うことになったのですが, <a target="_blank" href="https://blog.so-ta.net/set-up/linux-mint-change-language/">前の記事<span class="fa fa-external-link internal-icon anchor-icon"></span></a>のような入力切り替えにしたい&#8230;<br />
+Mac初心者なのでアドバイスなどがあればよろしくお願いします&#8230; </p>
+<h2>環境</h2>
+<p>macOS Catalina</p>
+<h2>目的</h2>
+<p><a target="_blank" href="https://blog.so-ta.net/set-up/linux-mint-change-language/">前の記事<span class="fa fa-external-link internal-icon anchor-icon"></span></a>と同じようなキーの位置で入力を切り替えたいので, caps lockキー(キー設定はcommand) + spaceキーで英, shitキー + spaceキーで日本語にします. </p>
+<h2>手順</h2>
+<p><a rel="noopener" target="_blank" href="https://ei-kana.appspot.com/">ここ<span class="fa fa-external-link external-icon anchor-icon"></span></a>から英かなというアプリをダウンロード, インストールします.<br />
+あとは以下のように設定するだけです. <img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/04/スクリーンショット-2020-04-15-20.34.54.png" alt="" /></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/set-up/mac-change-language/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>latexで図を入れたとき本文が割り込まないようにする</title>
+		<link>https://blog.so-ta.net/missing-memo/latex-image-interrupt/</link>
+					<comments>https://blog.so-ta.net/missing-memo/latex-image-interrupt/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sun, 12 Jan 2020 13:57:41 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=383</guid>
+
+					<description><![CDATA[はじめに 通常, texの中に図をいれると図の大きさのせいで本文が先に入ってしまいます&#8230; 今回はその対処方法です. 現象 例(卒論)として以下のようなtexファイルだと&#8230; Nodeの概要図を図\r [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>通常, texの中に図をいれると図の大きさのせいで本文が先に入ってしまいます&#8230;<br />
+今回はその対処方法です. </p>
+<h2>現象</h2>
+<p>例(卒論)として以下のようなtexファイルだと&#8230;</p>
+<pre><code>Nodeの概要図を図\ref{fig:in_node}に示す. 
+\begin{figure}[h]
+    \begin{center}
+    \centering
+    \includegraphics[width=10cm, bb= 0 0 569 420]{in_node.png} 
+    \caption{Nodeの中身}
+    \label{fig:in_node}
+\end{center}
+\end{figure}　
+
+Nodeに含まれるのは代表的なものは前述したkubeletとDocker(コンテナランタイム), そしてPodである. 
+Podとは, 同じ実行環境上で動くアプリケーションコンテナとストレージボリューム以下の集まりであり, KubernetesのCluster上ではコンテナではなくPodが
+最小デプロイ単位である. また1つのPod内のコンテナは全て同じマシン上に配置される. </code></pre>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/01/Screenshot-from-2020-01-12-22-46-02.png" alt="" /></p>
+<p>こんな感じに任意の場所に画像がはいらないため, 本文が先に入っています. </p>
+<p>ですが, 僕は改ページしてほしかったのです. </p>
+<h2>対処方法</h2>
+<p>usepackage{float}というものを使います. </p>
+<p>まず以下のように\begin{document}の上に記述してください</p>
+<pre><code>\usepackage{float}
+
+\begin{document}</code></pre>
+<p>次に図の場所を指定する「h」を「H」にしてください. </p>
+<pre><code>
+\subsubsection{Nodeに含まれる要素}
+
+Nodeの概要図を図\ref{fig:in_node}に示す. 
+\begin{figure}[H]
+    \begin{center}
+    \centering
+    \includegraphics[width=10cm, bb= 0 0 569 420]{in_node.png} 
+    \caption{Nodeの中身}
+    \label{fig:in_node}
+\end{center}
+\end{figure}　
+
+Nodeに含まれるのは代表的なものは前述したkubeletとDocker(コンテナランタイム), そしてPodである. 
+Podとは, 同じ実行環境上で動くアプリケーションコンテナとストレージボリューム以下の集まりであり, KubernetesのCluster上ではコンテナではなくPodが
+最小デプロイ単位である. また1つのPod内のコンテナは全て同じマシン上に配置される. </code></pre>
+<p>これだけです!<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/01/Screenshot-from-2020-01-12-22-54-52.png" alt="" /></p>
+<h2>おわりに</h2>
+<p>卒論めんっどくさい!!!</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/latex-image-interrupt/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

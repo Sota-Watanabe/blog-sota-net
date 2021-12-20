@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>kubernetes  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/kubernetes/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Tue, 03 Dec 2019 09:54:09 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>kubernetes  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>k8sをソースコードからビルドしてローカルで起動する</title>
+		<link>https://blog.so-ta.net/kubernetes/source-code-build/</link>
+					<comments>https://blog.so-ta.net/kubernetes/source-code-build/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sat, 02 Nov 2019 04:38:09 +0000</pubDate>
+				<category><![CDATA[kubernetes]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=209</guid>
+
+					<description><![CDATA[はじめに 前々回、kubeadmを使い、ローカルでk8sを起動する方法を紹介しました。今回はkubeadmを使わずにk8sのソースコードからビルドし、起動する方法を紹介します。k8sのソースコードをいじって自分用のk8s [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>前々回、kubeadmを使い、ローカルでk8sを起動する方法を紹介しました。今回はkubeadmを使わずにk8sのソースコードからビルドし、起動する方法を紹介します。k8sのソースコードをいじって自分用のk8s環境を作りたいという方にはぜひ参考にしてください。</p>
+<h2>環境</h2>
+<p>Ubutnu 18.02 </p>
+<h2>手順</h2>
+<p>まず、dockerをインストールします。ちゃんと公式ドキュメントを見ましょう。たまに非公式なものをインストールするとエラーが出ます。</p>
+<pre><code>   sudo add-apt-repository \
+   &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   (lsb_release -cs) \
+   stable&quot;
+   sudo apt update
+   sudo apt-get install docker-ce docker-ce-cli containerd.io</code></pre>
+<p>次にetcdをインストールするのですが、これは一回飛ばします。k8sのソースコードにはetcdをインストールするためのシェルスクリプトが入っているので怒られたらそれを使います。<br />
+あとgo言語ですね。 <a rel="noopener" target="_blank" href="https://github.com/kubernetes/community/blob/master/contributors/devel/development.md">バージョンを確認して<span class="fa fa-external-link external-icon anchor-icon"></span></a>入れましょう。 自分のk8sソースコードに対応したgoを入れてください。 参考までに自分のインストール方法を載せます。</p>
+<pre><code>  curl -O https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
+  tar -C /usr/local -xzf go1.13.1.linux-amd64.tar.gz
+  export PATH=$PATH:/usr/local/go/bin</code></pre>
+<p>追記:<br />
+もし「exec: &quot;gcc&quot;: executable file not found in $PATH」 といった表示が出たら、<code>sudo apt install gcc</code>でgccをインストールしてください。<br />
+OpenSSLとCFSSLもインストールします。それぞれコマンドを打ってみて既にインストールされているようならば問題ありません。自分の環境ではOpenSSLは入っていたのでCFSSLだけインストールします。</p>
+<pre><code>  go get -u github.com/cloudflare/cfssl/cmd/...
+  export PATH=$PATH:$GOPATH/bin</code></pre>
+<p>それではk8sソースコードをcloneします。cloneする際、オプション -b でバージョンを指定することをおすすめします。最新のバージョンはまだ発見されていないバグがあるかもしれません。(まあ安定版も同じかもしれませんが)</p>
+<p>追記:<br />
+git cloneする場所は~/go/src/k8s.io/ をおすすめします。</p>
+<pre><code>mkdir ~/go/src/k8s.io/
+cd ~/go/src/k8s.io/
+git clone https://github.com/kubernetes/kubernetes.git -b v1.15.5</code></pre>
+<p>cloneしたらkubernetesに入り、kubernetesを起動するためのシェルスクリプトを実行します。</p>
+<pre><code>cd kubernetes
+hack/local-up-cluster.sh</code></pre>
+<p>ここでエラーがでました。git issueを探してみると<a rel="noopener" target="_blank" href="https://github.com/kubernetes/kubernetes/issues/82531">こんなもの<span class="fa fa-external-link external-icon anchor-icon"></span></a>がありました。どうやらgo言語のモジュール関連のエラーらしいですね。<br />
+/hack/lib/init.shにある「GO111MODULE =  auto」を「GO111MODULE = off」に変えると起動できます。</p>
+<h2>参考文献</h2>
+<a rel="noopener" target="_blank" href="https://docs.docker.com/install/linux/docker-ce/ubuntu/" title="Redirecting&hellip;" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://s0.wordpress.com/mshots/v1/https%3A%2F%2Fdocs.docker.com%2Finstall%2Flinux%2Fdocker-ce%2Fubuntu%2F?w=160&#038;h=90" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">Redirecting&hellip;</div><div class="blogcard-snippet external-blogcard-snippet"></div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=docs.docker.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">docs.docker.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://github.com/helm/helm/issues/4181" title="kube-system tiller-deploy-f9b8476d-zkln4 always pending by failed scheduling · Issue #4181 · helm/helm" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/b2a93fd5e77b3abb4bca88ac9e3dc43e4f5fb261e01dc3a2be85fdb8752839cd/helm/helm/issues/4181" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">kube-system tiller-deploy-f9b8476d-zkln4 always pending by failed scheduling · Issue #4181 · helm/helm</div><div class="blogcard-snippet external-blogcard-snippet">how to fix this? Output of helm version: Client: &amp;version.Version{SemVer:&quot;v2.9.1&quot;, GitCommit:&quot;20adb27c7c5868466912eebdf6664e7390ebe710&quot;,...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://github.com/kubernetes/community/blob/master/contributors/devel/running-locally.md" title="community/running-locally.md at master · kubernetes/community" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/986bf816ba8b72d4e9ca239a56f1996801c79b0d47e165cc93239dc8872475f5/kubernetes/community" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">community/running-locally.md at master · kubernetes/community</div><div class="blogcard-snippet external-blogcard-snippet">Kubernetes community content. Contribute to kubernetes/community development by creating an account on GitHub.</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://github.com/kubernetes/kubernetes/issues/82531" title="switch build scripts to use go modules, stop requiring $GOPATH · Issue #82531 · kubernetes/kubernetes" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/cde3eb3a11e4abd5bfb24cc692f22fbee6462cc745318092f1ba9463e8d73c38/kubernetes/kubernetes/issues/82531" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">switch build scripts to use go modules, stop requiring $GOPATH · Issue #82531 · kubernetes/kubernetes</div><div class="blogcard-snippet external-blogcard-snippet">Tasks to move to go1.13: resolve #82506 / heketi/heketi#1648 (fixed upstream heketi/heketi#1649) fixed in k8s in #82805 update gofmt-formatted source to be comp...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/kubernetes/source-code-build/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>ローカルでkubernetes環境を構築する(kubeadm)</title>
+		<link>https://blog.so-ta.net/kubernetes/kubeadm-local/</link>
+					<comments>https://blog.so-ta.net/kubernetes/kubeadm-local/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sat, 28 Sep 2019 08:28:37 +0000</pubDate>
+				<category><![CDATA[kubernetes]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=103</guid>
+
+					<description><![CDATA[はじめに 　今回は自分のPCでkubernetes環境(以下k8s)と作成しようと思います。ネットで調べるとGoogle Kubernetes Engine (GKE)やAzure Kubernetes Service  [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>　今回は自分のPCでkubernetes環境(以下k8s)と作成しようと思います。ネットで調べるとGoogle Kubernetes Engine (GKE)やAzure Kubernetes Service (AKS)などリモートの環境が多かったのですが、オンプレは記事が少なかったのでメモついでに書きます。</p>
+<h2>開発環境</h2>
+<p>Ubuntu 18.04</p>
+<h2>手順</h2>
+<p>まずroot権限に変更し、スワップ機能をオフにします。</p>
+<pre><code>sudo -s
+swapoff -a</code></pre>
+<p>次にdocker をインストールします。</p>
+<pre><code>#Install Docker CE
+## Set up the repository:
+### Install packages to allow apt to use a repository over HTTPS
+apt-get update &amp;&amp; apt-get install apt-transport-https ca-certificates curl software-properties-common
+
+### Add Docker’s official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+
+### Add Docker apt repository.
+add-apt-repository \
+  &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) \
+  stable&quot;
+
+## Install Docker CE.
+apt-get update &amp;&amp; apt-get install docker-ce=5:18.09.5~3-0~ubuntu-bionic
+
+mkdir -p /etc/systemd/system/docker.service.d
+
+# Restart docker.
+systemctl daemon-reload
+systemctl restart docker</code></pre>
+<p><code>docker version</code>で18.09.5が表示されればOKです。</p>
+<p>次にk8s環境を構築するためにkubeadm kubelet kubectlをインストールします。</p>
+<pre><code># Install kubeadm kubelet kubectl
+apt-get update &amp;&amp; apt-get install -y apt-transport-https curl
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+cat &lt;&lt;EOF &gt;/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+apt-get update
+apt-get install -y kubeadm=1.15.4-00 - 
+apt-get install -y kubelet=1.15.4-00 - 
+apt-get install -y kubectl=1.15.4-00 - 
+apt-mark hold kubelet kubeadm kubectl</code></pre>
+<p>kubeadm kubelet kubectlはv1.15.4-00 &#8211; をインストールします。</p>
+<p>ポッドネットワークアドオンを指定し、k8s環境を作成します。ポッドネットワークアドオンとはポッド同士で通信を行うために必要なものです。<br />
+自分はflannelを使いますが、他にもAWS VPCやCalicoなどがあるので気になる人は参考文献から公式サイトに飛んて見て下さい。</p>
+<pre><code>kubeadm init --pod-network-cidr=10.244.0.0/16</code></pre>
+<p>これでk8s環境が作成されました。<br />
+非rootユーザも操作できるようにします。</p>
+<pre><code>mkdir -p $HOME/.kube
+cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+exit
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+export KUBECONFIG=/etc/kubernetes/admin.conf </code></pre>
+<p>これで再度ログインすればkubectl が非ルートで操作できるようになります。<br />
+flannelファイルをapplyして確認してみましょう。</p>
+<pre><code>kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml</code></pre>
+<p>これでk8s環境完成です。お疲れ様でした。</p>
+<h2>初期化と再起動</h2>
+<h3>k8s環境の初期化</h3>
+<p>k8s環境を初期化するには以下のコマンドでOKです。</p>
+<pre><code>sudo kubeadm reset</code></pre>
+<p>iptableもリセットする場合は以下のコマンドです。</p>
+<pre><code>iptables -F &amp;&amp; iptables -t nat -F &amp;&amp; iptables -t mangle -F &amp;&amp; iptables -X</code></pre>
+<h3>PCを再起動</h3>
+<p>PCを再起動してもk8s環境は自動的に立ち上がります。しかしいくら待っても立ち上がらないときはスワップ機能を確認してみてください。スワップ機能がオフでないとk8s環境は機能しません。</p>
+<h2>参考文献</h2>
+<a rel="noopener" target="_blank" href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/" title="Creating a cluster with kubeadm" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://s0.wordpress.com/mshots/v1/https%3A%2F%2Fkubernetes.io%2Fdocs%2Fsetup%2Fproduction-environment%2Ftools%2Fkubeadm%2Fcreate-cluster-kubeadm%2F?w=160&#038;h=90" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">Creating a cluster with kubeadm</div><div class="blogcard-snippet external-blogcard-snippet">Using kubeadm, you can create a minimum viable Kubernetes cluster that conforms to best practices. In fact, you can use kubeadm to set up a cluster that will pa...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=kubernetes.io" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">kubernetes.io</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/kubernetes/kubeadm-local/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

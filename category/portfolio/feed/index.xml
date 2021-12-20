@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>ポートフォリオ  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/portfolio/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Sat, 12 Dec 2020 10:41:41 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>ポートフォリオ  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Googleドメインのサブドメインをgithub Pagesで利用する</title>
+		<link>https://blog.so-ta.net/portfolio/googlo-subdomain-github-pages/</link>
+					<comments>https://blog.so-ta.net/portfolio/googlo-subdomain-github-pages/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sat, 05 Sep 2020 08:57:39 +0000</pubDate>
+				<category><![CDATA[ポートフォリオ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=666</guid>
+
+					<description><![CDATA[]]></description>
+										<content:encoded><![CDATA[
+<p></p>
+
+
+
+<div class="wp-block-group alignfull"><div class="wp-block-group__inner-container">
+<h2>なぜやるか</h2>
+
+
+
+<p><a target="_blank" class="wp-editor-md-post-content-link" href="https://blog.so-ta.net/set-up/react-github-pages-actions/">一個前の記事<span class="fa fa-external-link internal-icon anchor-icon"></span></a>の続きです.<br>github Pagesのドメインはデフォルトでは</p>
+
+
+
+<p>「http(s)://user名.github.io/ repository名」<br>こんなURLになっています. 全然これでもいいんですが, せっかく自分のドメインを持っているので使おうと思います.</p>
+
+
+
+<h2>前提</h2>
+
+
+
+<p>デフォルトのURLでサイトが正しく表示されること</p>
+
+
+
+<h2>手順</h2>
+
+
+
+<h3>github Actionsの設定</h3>
+
+
+
+<p>もしgithub Actionsを使わない場合はこの節をスキップしてください.</p>
+
+
+
+<p>前回作成したymlファイルにwith.cnameを追加します. 内容はデプロイするURL(ここではportfolio.so-ta.net)です.</p>
+
+
+
+<div class="hcb_wrap">
+<pre>name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.0
+        with:
+          node-version: "12.x"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build<br>　　　　　　// 以下を追加↓
+          cname: portfolio.so-ta.net</pre>
+</div>
+
+
+
+<h3>github pagesの設定</h3>
+
+
+
+<p>リポジトリのsettingタブを開き, 下の方にいくとgithub pagesの設定画面があります.<br>そのなかのCustom domainを自分が利用したいURLにしてください.<br>自分は独自ドメイン「so-ta.net」のportfolioというサブドメインを<br>利用したかったので以下のように変更しました.<br><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/09/スクリーンショット-2020-09-05-17.29.06.png" alt=""></p>
+
+
+
+<p>ついでにHTTPSにするためチェックをつけます.<br>チェックできない場合がありますが, これは時間がかかる時があるらしいので待ちましょう.</p>
+
+
+
+<h3>googleドメインの設定</h3>
+
+
+
+<p>次にgoogleドメインの設定をします.<br><a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://domains.google/intl/ja_jp/">ここ<span class="fa fa-external-link external-icon anchor-icon"></span></a>からマイドメインにアクセスし, サイドバーからDNSを開いてください.<br>DNSの1番下にカスタムリソースコードの設定画面があると思います.<br>CNAMEレコードでサブドメインと転送先のドメイン名を入力してください.<br>転送先ドメインは自分のgithub.ioです.</p>
+
+
+
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/09/スクリーンショット-2020-09-05-17.37.05-1.png" alt=""><br>これで指定のURL(今回はportfolio.so-ta.net)にきた際にgithubのドメインに転送することができました.</p>
+
+
+
+<h3>package.jsonの設定</h3>
+
+
+
+<p>最後にpackage.jsonを以下のようにすればOKです.</p>
+
+
+
+<pre class="wp-block-code json"><code>"homepage": "https://portfolio.so-ta.net/"</code></pre>
+
+
+
+<div class="wp-block-group"><div class="wp-block-group__inner-container"></div></div>
+
+
+
+<p></p>
+
+
+
+<h2>参考</h2>
+
+
+
+
+<a rel="noopener" target="_blank" href="https://mae.chab.in/archives/60095" title="GitHub Pagesに独自ドメインを設定してHTTPS化する" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/0f0ac3bf0ae27b4488e6d9bda1624f66.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">GitHub Pagesに独自ドメインを設定してHTTPS化する</div><div class="blogcard-snippet external-blogcard-snippet">5月1日のThe Github blogで「Custom domains on GitHub Pages gain support for HTTPS」という記事が投稿されました。何の話かというと独自...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=mae.chab.in" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">mae.chab.in</div></div></div></div></a>
+
+
+
+
+<p></p>
+</div></div>
+
+
+
+<p></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/portfolio/googlo-subdomain-github-pages/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Reactアプリをgithub Pages, Actionsでデプロイ</title>
+		<link>https://blog.so-ta.net/portfolio/react-github-pages-actions/</link>
+					<comments>https://blog.so-ta.net/portfolio/react-github-pages-actions/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Fri, 04 Sep 2020 14:30:34 +0000</pubDate>
+				<category><![CDATA[ポートフォリオ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=628</guid>
+
+					<description><![CDATA[やりたいこと feature/〜ブランチつくってdevelopブランチにプルリク, ある程度まとまったらdevelopブランチをmasterへプルリクして開発したい. そのときmasterの変更があったときにだけgith [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>やりたいこと</h2>
+<p>feature/〜ブランチつくってdevelopブランチにプルリク, ある程度まとまったらdevelopブランチをmasterへプルリクして開発したい.<br />
+そのときmasterの変更があったときにだけgithub Actionsでビルド, 出力をgithub pagesでホスティングしたい.</p>
+<h3>なぜやるか</h3>
+<p>正直, ポートフォリオみたいに一人かつ複雑ではないものを作るだけならこんな遠回りしなくても普通に<a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://qiita.com/yuitnnn/items/11375ea29ec023d19fdf">こんな感じ<span class="fa fa-external-link external-icon anchor-icon"></span></a>で直接masterブランチにプッシュすればいい.<br />
+<del>でもやっぱりいつかチーム開発にはもちろんこんな感じになるし多分, あとCI/CDを意識した方が今後役に立つから&#8230;</del></p>
+<h1>github Actionsとgithub pages使ってみたかったし,</h1>
+<h1>なによりかっこいいのでやりました.</h1>
+<h2>前提</h2>
+<p>react-create-appでアプリを作っている前提とします.<br />
+今回やるのはmasterブランチに変更があったらデプロイされるところまでです.</p>
+<h2>手順</h2>
+<h3>ビルドの確認</h3>
+<pre><code class="language-bash line-numbers">npm run start
+npm run build
+</code></pre>
+<p>コマンドを実行してlocalhostで動くか確認と正しくビルドできるかの確認をしましょう. CI/CDの部分を作るのにそれ以前の問題になってしまいます.<br />
+なぜこんな初歩的なことを言うのかというと僕がこれを怠ったため時間を無駄にしてしまったからです. ちゃんと確認しましょう.</p>
+<h4>具体的な確認</h4>
+<ul>
+<li>localhost:3000に意図しているページが表示されているか.</li>
+<li>buildコマンドで/buildディレクトリが作成され, 中にそれっぽいものが入っているか</li>
+</ul>
+<p>確認が終わったらmasterへプッシュしてしまいましょう.</p>
+<h3>github Actionsのymlを書く</h3>
+<p>/.github/workflows/ディレクトリの中にymlファイルを書くとgithub君はgithub Actionsとして認識してくれます.<br />
+以下は僕が作成したものです.</p>
+<pre><code class="language-yaml line-numbers">name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.0
+        with:
+          node-version: "12.x"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+</code></pre>
+<h4>やってること</h4>
+<ol>
+<li>masterブランチがpushされたときにイベント発火</li>
+<li>ubuntu環境をセット, npm もいれる</li>
+<li>npm ci でパッケージをインストール</li>
+<li>npm run buildでビルド, 出力はデフォルトで./buildへ吐き出される</li>
+<li>./buildにあるファイルをgh-pagesブランチにコミット</li>
+</ol>
+<p>それではファイルをmasterにpushしてください.<br />
+するとgithub Actionsが動いているはずです.</p>
+<h3>github上の設定</h3>
+<p>最後にgithub pagesの設定を行います.<br />
+リポジトリのsettingタブを開いてください. 下の方にgithub pagesの設定項目があります.</p>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/09/スクリーンショット-2020-09-04-22.02.47.png" alt="" /><br />
+先ほどのgithub Actionsでgh-pagesブランチができているはずなのでそれを選択してください.</p>
+<p>すると画像の緑の部分のようにメッセージがでます.<br />
+そのURLがデプロイ先になりますが, まだ正常なページが表示されません.</p>
+<h3>package.jsonにhomepageを追加</h3>
+<p>package.jsonに以下の記述を追加してください</p>
+<pre><code class="language-json line-numbers">"homepage": "デプロイ先のURL"
+</code></pre>
+<p>デプロイ先のURLは先ほど確認した緑の部分に表示されているURLにしてください. これがないとcssなどが404になってしまいます.</p>
+<h3>さいごに</h3>
+<p>勝手にデプロイされるのってなんかいいですね.<br />
+あと独自ドメインでホスティングする方法は別記事に書きます.</p>
+<h2>参考</h2>
+<a rel="noopener" target="_blank" href="https://github.com/peaceiris/actions-gh-pages" title="GitHub - peaceiris/actions-gh-pages: GitHub Actions for GitHub Pages 🚀 Deploy static files and publish your site easily. Static-Site-Generators-friendly." class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://repository-images.githubusercontent.com/187915200/5dcf0d00-3bf8-11ea-9009-37da036f4f6b" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">GitHub - peaceiris/actions-gh-pages: GitHub Actions for GitHub Pages 🚀 Deploy static files and publish your site easily. Static-Site-Generators-friendly.</div><div class="blogcard-snippet external-blogcard-snippet">GitHub Actions for GitHub Pages 🚀 Deploy static files and publish your site easily. Static-Site-Generators-friendly. - GitHub - peaceiris/actions-gh-pages: GitH...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/portfolio/react-github-pages-actions/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

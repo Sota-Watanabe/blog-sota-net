@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Linux Mint  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/tag/linux-mint/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Mon, 09 Dec 2019 08:01:40 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>Linux Mint  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>自分の環境</title>
+		<link>https://blog.so-ta.net/set-up/favorite/</link>
+					<comments>https://blog.so-ta.net/set-up/favorite/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sun, 04 Aug 2019 04:21:25 +0000</pubDate>
+				<category><![CDATA[環境構築]]></category>
+		<category><![CDATA[Linux Mint]]></category>
+		<category><![CDATA[VScode]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=30</guid>
+
+					<description><![CDATA[今回は自分がメインで使っているものを紹介します。 ちなみに画像はうちのネコです。かわいいです。 使っているもの OS Linux Mint 19.1 Tessa (cinnamon) Ubuntuから派生したディストリビ [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>今回は自分がメインで使っているものを紹介します。<br />
+ちなみに画像はうちのネコです。かわいいです。</p>
+<h2>使っているもの</h2>
+<h3>OS</h3>
+<h4>Linux Mint 19.1 Tessa (cinnamon)</h4>
+<p>Ubuntuから派生したディストリビューションです。<br />
+デザインがよく、軽いので気に入っています。</p>
+<h3>エディタ</h3>
+<h4>Visual Studio Code</h4>
+<p>言わずとしれた有名エディタ。拡張機能も充実していて何でもできるイメージ。<br />
+これを使いこなすのが自分の目標の一つでもある。</p>
+<h3>キーボード</h3>
+<h4>東プレ REALFORCE 86U</h4>
+<p>研究室で余っていたもの。とても打ちやすい。<br />
+値段を知ってマジでびっくりしたのはいい思い出。</p>
+<h3>ソフトウェア</h3>
+<h4>Docker</h4>
+<p>環境構築に使う、仮想化環境のためのソフトウェア。<br />
+仮想環境って本環境汚さないから結構好き。<br />
+Dockerについての記事をいつか書こうと思っている。</p>
+<h4>Kubernetes</h4>
+<p>Dockerなどでコンテナ化したアプリを管理するためのソフトウェア。<br />
+卒業研究のために仲良くしなければならない奴のひとり。</p>
+<h2>おわりに</h2>
+<p>以上、メインメンバー達でした。<br />
+今後記事を書く際には最低限の環境を記述する予定ですが、<br />
+書かれていない場合はこれらを使っていると思って下さい。</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/set-up/favorite/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

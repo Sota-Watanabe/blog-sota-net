@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>失敗メモ  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/missing-memo/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Fri, 31 Jul 2020 13:52:17 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>失敗メモ  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>gatsbyのチュートリアル3ができない</title>
+		<link>https://blog.so-ta.net/missing-memo/gatsby-tutorial-3-error/</link>
+					<comments>https://blog.so-ta.net/missing-memo/gatsby-tutorial-3-error/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Fri, 31 Jul 2020 13:52:17 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=538</guid>
+
+					<description><![CDATA[はじめに gatsbyに入門しようとチュートリアルを進めていたら予想外のところでエラーがでたのでその現象と解決策を共有します. 現象 gatsbyのチュートリアルPART3をやっていました. いろいろjsを書き, チュー [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>gatsbyに入門しようとチュートリアルを進めていたら予想外のところでエラーがでたのでその現象と解決策を共有します. </p>
+<h2>現象</h2>
+<p><a rel="noopener" target="_blank" href="https://www.gatsbyjs.org/tutorial/part-three/#-install-and-configure-gatsby-plugin-typography">gatsbyのチュートリアルPART3<span class="fa fa-external-link external-icon anchor-icon"></span></a>をやっていました.<br />
+いろいろjsを書き, チュートリアル通りに</p>
+<pre><code>gatsby develop</code></pre>
+<p>とするとreactがないと怒られました. あれ? なんで? と思いながらもnpm install すれば治るでしょと</p>
+<pre><code>npm install
+gatsby develop</code></pre>
+<p>すると</p>
+<pre><code>ERROR
+
+The above error occurred in the &amp;lt;StoreStateProvider&amp;gt; component:
+    in StoreStateProvider
+    in App
+
+React will try to recreate this component tree from scratch using the error boundary you provided, App.
+
+ ERROR
+
+Warning: App: Error boundaries should implement getDerivedStateFromError(). In that method, return a state update to display an error message or fallback UI.
+
+ ERROR
+
+UNHANDLED REJECTION Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
+
+  Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for o  ne of the following reasons:
+  1. You might have mismatching versions of React and the renderer (such as React DOM)
+  2. You might be breaking the Rules of Hooks
+  3. You might have more than one copy of React in the same app
+  See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
+
+...</code></pre>
+<p>となりました&#8230;<br />
+チュートリアル通りやったのになんでだー!</p>
+<h2>道のり</h2>
+<p>軽く調べて同じような方がいたので<br />
+対処法としてnode_modulesを削除してnpm installすれば治るらしいのでやってみたんですが治りませんでした&#8230;</p>
+<h3>解決方法</h3>
+<p>yarnでやるのがいいそうです. </p>
+<a rel="noopener" target="_blank" href="https://github.com/gatsbyjs/gatsby/issues/19064#issuecomment-650795538" title="install gatsby-transformer-remark breaks &#039;gatsby develop&#039; · Issue #19064 · gatsbyjs/gatsby" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/c18c38f091a47334c2b7280a878c541578d2405a587075276bfc3c3e7e357cb1/gatsbyjs/gatsby/issues/19064" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">install gatsby-transformer-remark breaks 'gatsby develop' · Issue #19064 · gatsbyjs/gatsby</div><div class="blogcard-snippet external-blogcard-snippet">When I install gatsby-transformer-remark it breaks the development environment for that site. Tried this 3 times from a fresh install using npm. 1 - Install new...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+<pre><code>rm  package-lock.json
+yarn install
+gatsby develop</code></pre>
+<h2>おわりに</h2>
+<p>これからgatsby頑張るぞー</p>
+<h2>参考文献</h2>
+<a rel="noopener" target="_blank" href="https://github.com/gatsbyjs/gatsby/issues/19064" title="install gatsby-transformer-remark breaks &#039;gatsby develop&#039; · Issue #19064 · gatsbyjs/gatsby" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/c18c38f091a47334c2b7280a878c541578d2405a587075276bfc3c3e7e357cb1/gatsbyjs/gatsby/issues/19064" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">install gatsby-transformer-remark breaks 'gatsby develop' · Issue #19064 · gatsbyjs/gatsby</div><div class="blogcard-snippet external-blogcard-snippet">When I install gatsby-transformer-remark it breaks the development environment for that site. Tried this 3 times from a fresh install using npm. 1 - Install new...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://github.com/gatsbyjs/gatsby/issues/21990" title="docs(tutorial): tutorial/part-three  -&gt; walkthrough failing if yarn is selected as packageManager · Issue #21990 · gatsbyjs/gatsby" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://opengraph.githubassets.com/d51955a423b1ee9dd6acb630bf02994fd7a1f19ca403a257854013914302f680/gatsbyjs/gatsby/issues/21990" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">docs(tutorial): tutorial/part-three  -> walkthrough failing if yarn is selected as packageManager · Issue #21990 · gatsbyjs/gatsby</div><div class="blogcard-snippet external-blogcard-snippet">Summary when the packageManager in ~/.config/gatsby/config.json set to yarn then the walkthrough failing (see related issues) Basic example Possible changes and...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=github.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">github.com</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/gatsby-tutorial-3-error/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>latexで図を入れたとき本文が割り込まないようにする</title>
+		<link>https://blog.so-ta.net/missing-memo/latex-image-interrupt/</link>
+					<comments>https://blog.so-ta.net/missing-memo/latex-image-interrupt/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sun, 12 Jan 2020 13:57:41 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=383</guid>
+
+					<description><![CDATA[はじめに 通常, texの中に図をいれると図の大きさのせいで本文が先に入ってしまいます&#8230; 今回はその対処方法です. 現象 例(卒論)として以下のようなtexファイルだと&#8230; Nodeの概要図を図\r [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>通常, texの中に図をいれると図の大きさのせいで本文が先に入ってしまいます&#8230;<br />
+今回はその対処方法です. </p>
+<h2>現象</h2>
+<p>例(卒論)として以下のようなtexファイルだと&#8230;</p>
+<pre><code>Nodeの概要図を図\ref{fig:in_node}に示す. 
+\begin{figure}[h]
+    \begin{center}
+    \centering
+    \includegraphics[width=10cm, bb= 0 0 569 420]{in_node.png} 
+    \caption{Nodeの中身}
+    \label{fig:in_node}
+\end{center}
+\end{figure}　
+
+Nodeに含まれるのは代表的なものは前述したkubeletとDocker(コンテナランタイム), そしてPodである. 
+Podとは, 同じ実行環境上で動くアプリケーションコンテナとストレージボリューム以下の集まりであり, KubernetesのCluster上ではコンテナではなくPodが
+最小デプロイ単位である. また1つのPod内のコンテナは全て同じマシン上に配置される. </code></pre>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/01/Screenshot-from-2020-01-12-22-46-02.png" alt="" /></p>
+<p>こんな感じに任意の場所に画像がはいらないため, 本文が先に入っています. </p>
+<p>ですが, 僕は改ページしてほしかったのです. </p>
+<h2>対処方法</h2>
+<p>usepackage{float}というものを使います. </p>
+<p>まず以下のように\begin{document}の上に記述してください</p>
+<pre><code>\usepackage{float}
+
+\begin{document}</code></pre>
+<p>次に図の場所を指定する「h」を「H」にしてください. </p>
+<pre><code>
+\subsubsection{Nodeに含まれる要素}
+
+Nodeの概要図を図\ref{fig:in_node}に示す. 
+\begin{figure}[H]
+    \begin{center}
+    \centering
+    \includegraphics[width=10cm, bb= 0 0 569 420]{in_node.png} 
+    \caption{Nodeの中身}
+    \label{fig:in_node}
+\end{center}
+\end{figure}　
+
+Nodeに含まれるのは代表的なものは前述したkubeletとDocker(コンテナランタイム), そしてPodである. 
+Podとは, 同じ実行環境上で動くアプリケーションコンテナとストレージボリューム以下の集まりであり, KubernetesのCluster上ではコンテナではなくPodが
+最小デプロイ単位である. また1つのPod内のコンテナは全て同じマシン上に配置される. </code></pre>
+<p>これだけです!<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/01/Screenshot-from-2020-01-12-22-54-52.png" alt="" /></p>
+<h2>おわりに</h2>
+<p>卒論めんっどくさい!!!</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/latex-image-interrupt/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>latexで画像を設置する</title>
+		<link>https://blog.so-ta.net/missing-memo/latex-center-image/</link>
+					<comments>https://blog.so-ta.net/missing-memo/latex-center-image/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Tue, 24 Dec 2019 11:44:22 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=377</guid>
+
+					<description><![CDATA[はじめに この記事で環境を作ったあとに、platexを使っていたら、うまく画像が設置できませんでした。方法をメモっておきます。 方法 \includegraphics[width=8cm, bb=0 0 720 540] [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p><a target="_blank" href="https://blog.so-ta.net/set-up/docker-latex/">この記事<span class="fa fa-external-link internal-icon anchor-icon"></span></a>で環境を作ったあとに、platexを使っていたら、うまく画像が設置できませんでした。方法をメモっておきます。</p>
+<h2>方法</h2>
+<pre><code> \includegraphics[width=8cm, bb=0 0 720 540]{fig.pdf}</code></pre>
+<p>このような記述をすると中心がずれています&#8230;。bbの値を手当たりしだいでやってもうまくいきません。</p>
+<pre><code>extractbb fig.pdf</code></pre>
+<p>というコマンドを使って.xbbファイルを作成してください。この.xbbファイルの中に記述されている「 BoundingBox: 」に記述されている値をbbに書けば中心になります。</p>
+<h2>おわりに</h2>
+<p>まだplatexの理解が及んでいない&#8230;<br />
+頑張らなければ。</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/latex-center-image/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>docker checkpointでチェックポイントが作成されない!</title>
+		<link>https://blog.so-ta.net/missing-memo/cannot-make-checkpoint/</link>
+					<comments>https://blog.so-ta.net/missing-memo/cannot-make-checkpoint/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Thu, 12 Dec 2019 10:24:30 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=274</guid>
+
+					<description><![CDATA[はじめに dockerの実験的な機能としてcheckpointというものがあります。 現象 docker checkpoint create コンテナ名とコマンドを打ったら以下のようなエラーがでました。 ~/criu-d [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>dockerの実験的な機能としてcheckpointというものがあります。</p>
+<h2>現象</h2>
+<p>docker checkpoint create コンテナ名とコマンドを打ったら以下のようなエラーがでました。<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/12/Screenshot-from-2019-12-06-14-51-48.png" alt="" /><br />
+~/criu-dump.logを見てくださいと言われたので見るとエラーメッセージを発見。<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/12/Screenshot-from-2019-12-06-14-49-50.png" alt="" /></p>
+<h2>解決方法</h2>
+<h3>解説</h3>
+<p>今回はちゃんと<a rel="noopener" target="_blank" href="https://criu.org/Docker">公式ドキュメント<span class="fa fa-external-link external-icon anchor-icon"></span></a>に書いてありました。<br />
+TCP接続でコンテナをチェックポイントおよび復元をする場合にはオプションの追加が必要らしいです。</p>
+<h3>対処</h3>
+<p>/etc/criu/runc.confに「tcp-established」という記述を追加しましょう。criuディレクトリ、またはrunc.confファイルがない場合は自分で作りましょう。</p>
+<h2>おわりに</h2>
+<p>なんでTCP接続オプションがデフォルトでFalseなんだろう&#8230;<br />
+あまり使わないからって理由かな?</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/cannot-make-checkpoint/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Yamaha USB-MIDI Driverでlinux用がない!</title>
+		<link>https://blog.so-ta.net/missing-memo/yamaha-usb-midi-driver-linux/</link>
+					<comments>https://blog.so-ta.net/missing-memo/yamaha-usb-midi-driver-linux/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sat, 07 Dec 2019 07:14:22 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=343</guid>
+
+					<description><![CDATA[はじめに 大学のイベントでmidiを使ってピアノを動かすことになりました。色々調べた結果、Yamaha USB-MIDI Driverを使おうと思ったのですがlimux用がなく困ったときのメモです。 現象 Yamaha  [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p><a target="_blank" href="https://blog.so-ta.net/play/pc-keyboard-piano/">大学のイベントでmidiを使ってピアノを動かす<span class="fa fa-external-link internal-icon anchor-icon"></span></a>ことになりました。色々調べた結果、Yamaha USB-MIDI Driverを使おうと思ったのですがlimux用がなく困ったときのメモです。</p>
+<h2>現象</h2>
+<p><a rel="noopener" target="_blank" href="https://jp.yamaha.com/files/download/other_assets/8/455288/InstallationGuide_ja.pdf">Yamaha USB-MIDI Driverのインストールガイド<span class="fa fa-external-link external-icon anchor-icon"></span></a>があるのですが&#8230;<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/12/Screenshot-from-2019-12-07-15-46-40.png" alt="" /></p>
+<p>いやいやいやいや、linuxは?<br />
+となりました。まあしょうがないといえばしょうがないのですが&#8230;</p>
+<h2>解決方法</h2>
+<p>実はドライバを入れる必要がないんです。 もともとmidi用のドライバ?がはいっているらしくて</p>
+<pre><code>import mido
+import time
+
+ports = mido.get_output_names()
+with mido.open_output(ports[0]) as outport:
+    for msg in mido.MidiFile('new_song.mid'):
+        time.sleep(msg.time)
+        if not msg.is_meta:
+            print(outport, msg)
+            outport.send(msg) </code></pre>
+<p>例えばこのようなコードを書いて音がならない!というときはports[0]のところが間違っています。<br />
+以下のコマンドを打ってみてください</p>
+<pre><code>aplaymidi -l</code></pre>
+<p>これは今現在pcが認識しているmidiになります。自分の環境ではこのような出力になりました。<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/12/Screenshot-from-2019-12-07-16-04-09.png" alt="" /><br />
+この状態でport[0]とするとMidi Throughが 使われます。自分の場合はPiaggeroというYamahaのmidiキーボードで出力したかったのでport[1]とすれば音が出力されました。</p>
+<p>もちろんoutportはただの文字列なので手で指定することもできます。</p>
+<pre><code>with mido.open_output("Piaggero:Piaggero MIDI 1 20:0") as outport:</code></pre>
+<h2>おわりに</h2>
+<p>最初はlinuxだとmidiできないと思って超焦ってしまった&#8230;</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/yamaha-usb-midi-driver-linux/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>dial tcp: lookup index.docker.io on 10.0.0.10:53: server misbehavingがでてコンテナが作成されない!</title>
+		<link>https://blog.so-ta.net/missing-memo/dial-tcp-lookup-index-docker-io-no-make-container/</link>
+					<comments>https://blog.so-ta.net/missing-memo/dial-tcp-lookup-index-docker-io-no-make-container/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Tue, 03 Dec 2019 12:35:37 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=260</guid>
+
+					<description><![CDATA[はじめに knativeでサーバレス環境を作っていたときにservice.yamlをapplyしてもコンテナが作成されない事象が発生しました。ハマったのでここにメモしておきます。 現象 はじめにでも言いましたが、serv [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>knativeでサーバレス環境を作っていたときにservice.yamlをapplyしてもコンテナが作成されない事象が発生しました。ハマったのでここにメモしておきます。</p>
+<h2>現象</h2>
+<p>はじめにでも言いましたが、service.yamlをapplyしてもコンテナが作成されません。<br />
+なんだこれ?と思ってkubectl get ksvcでknative serviceの状態を見るとRevisionMissingになっている&#8230;<br />
+じゃあRevisionは?とkubectl get revisionで状態をみるとContainerMissingになってて&#8230;<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/12/Screenshot-from-2019-12-03-21-34-09.png" alt="" /><br />
+ならばとkubectl describe revisionで中身見てみると 、Get <a rel="noopener" target="_blank" href="https://index.docker.io/v2/">https://index.docker.io/v2/<span class="fa fa-external-link external-icon anchor-icon"></span></a>: dial tcp: lookup index.docker.io on 10.0.0.10:53: server misbehaving<br />
+の文字が&#8230;!<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/12/Screenshot-from-2019-12-03-21-30-21.png" alt="" /></p>
+<h2>解決方法</h2>
+<h3>解説</h3>
+<p>自分の環境ではDNSが悪さしてました。いや悪さっていうか自分が悪かっただけなんですが。<br />
+knativeはホストマシンの/etc/resolv.confをみてkube-dnsというDNS用のコンテナを立ち上げます。そしてそのDNS用コンテナを使って外部なんかと通信するわけですね。<br />
+このresolv.confを見るというのがやっかいでDNSをGUIで設定するとresolv.conf に記述されないんです&#8230;<br />
+そのためresolv.confにはdnsの設定が書かれておらず、 そしてそれを参照して作られるkube-dnsはdnsの設定がないままコンテナが作成されます。そのためあのようなエラーが出たというわけです。</p>
+<h3>対処</h3>
+<p>resolv.confにnameserverを記述すればOkです。あとはもう一度k8s環境を立ち上げましょう。</p>
+<h2>おわりに</h2>
+<p>knativeの情報少なすぎるよ&#8230;</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/dial-tcp-lookup-index-docker-io-no-make-container/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Ubuntuにcriuをインストールする</title>
+		<link>https://blog.so-ta.net/missing-memo/install-criu-ubuntu/</link>
+					<comments>https://blog.so-ta.net/missing-memo/install-criu-ubuntu/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Fri, 29 Nov 2019 08:49:22 +0000</pubDate>
+				<category><![CDATA[失敗メモ]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=242</guid>
+
+					<description><![CDATA[はじめに criuをインストールする方法を紹介します。公式ドキュメントに書いてあるのですが、記事は少なかったのでメモがてら書いていきます。 環境 Ubuntu 18.04.3 LTS 手順 sudo add-apt-re [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>criuをインストールする方法を紹介します。<a rel="noopener" target="_blank" href="https://criu.org/Main_Page">公式ドキュメント<span class="fa fa-external-link external-icon anchor-icon"></span></a>に書いてあるのですが、記事は少なかったのでメモがてら書いていきます。</p>
+<h2>環境</h2>
+<p>Ubuntu 18.04.3 LTS</p>
+<h2>手順</h2>
+<pre><code> sudo add-apt-repository ppa:criu/ppa
+ sudo apt install criu</code></pre>
+<p>これだけ。</p>
+<p><code>sudo criu check</code><br />
+でokで出れば完了です。</p>
+<h2>おわりに</h2>
+<p>公式ドキュメントには ソースコードからインストールや依存関係のものが色々書いてありますが、上記のコマンドでいけます。やっぱaptってすげぇわ</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/missing-memo/install-criu-ubuntu/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

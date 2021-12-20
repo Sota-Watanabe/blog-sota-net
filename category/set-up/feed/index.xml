@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>環境構築  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/set-up/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Wed, 15 Apr 2020 11:52:30 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>環境構築  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Mac で一方向に言語を切り替える</title>
+		<link>https://blog.so-ta.net/set-up/mac-change-language/</link>
+					<comments>https://blog.so-ta.net/set-up/mac-change-language/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Wed, 15 Apr 2020 11:52:30 +0000</pubDate>
+				<category><![CDATA[環境構築]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=402</guid>
+
+					<description><![CDATA[はじめに コロナの影響で大学にいけないため, Macを使うことになったのですが, 前の記事のような入力切り替えにしたい&#8230; Mac初心者なのでアドバイスなどがあればよろしくお願いします&#8230; 環境 ma [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>コロナの影響で大学にいけないため, Macを使うことになったのですが, <a target="_blank" href="https://blog.so-ta.net/set-up/linux-mint-change-language/">前の記事<span class="fa fa-external-link internal-icon anchor-icon"></span></a>のような入力切り替えにしたい&#8230;<br />
+Mac初心者なのでアドバイスなどがあればよろしくお願いします&#8230; </p>
+<h2>環境</h2>
+<p>macOS Catalina</p>
+<h2>目的</h2>
+<p><a target="_blank" href="https://blog.so-ta.net/set-up/linux-mint-change-language/">前の記事<span class="fa fa-external-link internal-icon anchor-icon"></span></a>と同じようなキーの位置で入力を切り替えたいので, caps lockキー(キー設定はcommand) + spaceキーで英, shitキー + spaceキーで日本語にします. </p>
+<h2>手順</h2>
+<p><a rel="noopener" target="_blank" href="https://ei-kana.appspot.com/">ここ<span class="fa fa-external-link external-icon anchor-icon"></span></a>から英かなというアプリをダウンロード, インストールします.<br />
+あとは以下のように設定するだけです. <img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/04/スクリーンショット-2020-04-15-20.34.54.png" alt="" /></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/set-up/mac-change-language/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>dockerでlatexを扱う</title>
+		<link>https://blog.so-ta.net/set-up/docker-latex/</link>
+					<comments>https://blog.so-ta.net/set-up/docker-latex/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sun, 08 Dec 2019 07:31:40 +0000</pubDate>
+				<category><![CDATA[環境構築]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=362</guid>
+
+					<description><![CDATA[はじめに 研究の梗概を書くためにdockerを使って環境を作ろうと思います。 手順 今回はpaperistさんが作成してくださった、apline-texlive-jaイメージを使う方法と自分がapline-texlive [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>研究の梗概を書くためにdockerを使って環境を作ろうと思います。</p>
+<h2>手順</h2>
+<p>今回はpaperistさんが作成してくださった、apline-texlive-jaイメージを使う方法と自分がapline-texlive-jaイメージをカスタマイズしたイメージを使う方法の2つを紹介します。</p>
+<h3>alpine-texlive-jaイメージ</h3>
+<p>まずdockerイメージを用意します。日本語にも対応したdockerイメージが作成されています。paperistさん、ありがとうございます。</p>
+<pre><code>docker pull paperist/alpine-texlive-ja</code></pre>
+<p>あとはtexファイルがあるディレクトリに移動して</p>
+<pre><code>docker run --rm -it -v $PWD:/workdir paperist/alpine-texlive-ja</code></pre>
+<p>とすればカレントディレクトリをマウントしたコンテナが作成されます。<br />
+そうしたらcliでいじるだけです。</p>
+<p>自分の場合は対応する.clsや画像を持ってきて</p>
+<pre><code>platex test.tex
+dvipdfmx test.dvi</code></pre>
+<p>とすればpdfが作成されます。</p>
+<h3>カスタマイズ</h3>
+<p>コンテナ上で上記のコマンドを一発で実行したかったため、自分でコンテナイメージを作成してみました。paperistさんのイメージに以下のtex2pdfという名前のfunctionを付け加えました。</p>
+<pre><code>#!/bin/sh
+if [ -z $1 ]; then
+  echo "no argument"
+  return 
+fi
+platex $1.tex
+platex $1.tex
+dvipdfmx $1.dvi</code></pre>
+<p>platexが2つあるのはたまにplatexが反映されないときがあるからです。<br />
+このイメージは<a rel="noopener" target="_blank" href="https://hub.docker.com/r/watanabesota/tex2pdf">自分のDockerhub<span class="fa fa-external-link external-icon anchor-icon"></span></a>にアップしておきます。</p>
+<h3>使い方</h3>
+<p>まず.texがあるディレクトリを開いてください。<br />
+次に以下のコマンドでコンテナを立ち上げて、コンテナのcliを開きます</p>
+<pre><code>docker pull watanabesota/tex2pdf
+docker run --rm -it -v $PWD:/workdir watanabesota/tex2pdf</code></pre>
+<p>あとはtest.texというファイルなら</p>
+<pre><code>tex2pdf test</code></pre>
+<p>とするだけです。</p>
+<h2>おわりに</h2>
+<p>texもdockerでできるなんて&#8230;<br />
+時代はdockerだな!</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/set-up/docker-latex/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>terminalを常に最前面に表示したい</title>
+		<link>https://blog.so-ta.net/set-up/terminal-always-front/</link>
+					<comments>https://blog.so-ta.net/set-up/terminal-always-front/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sat, 02 Nov 2019 06:38:52 +0000</pubDate>
+				<category><![CDATA[環境構築]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=233</guid>
+
+					<description><![CDATA[はじめに terminalは常に最前面にあるべきだと思います。はい。 手順 .bashrcに 以下を追加するだけ if [ &#34;$0&#34; = &#34;bash&#34; ]; then /usr/b [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>terminalは常に最前面にあるべきだと思います。はい。</p>
+<h2>手順</h2>
+<p>.bashrcに 以下を追加するだけ</p>
+<pre><code>if [ &quot;$0&quot; = &quot;bash&quot; ]; then
+  /usr/bin/wmctrl -r :ACTIVE: -b add,above;
+fi</code></pre>
+<h2>おわりに</h2>
+<p>絶妙に便利なのでおすすめです。</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/set-up/terminal-always-front/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>linux mint で一方向に言語を切り替える</title>
+		<link>https://blog.so-ta.net/set-up/linux-mint-change-language/</link>
+					<comments>https://blog.so-ta.net/set-up/linux-mint-change-language/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sun, 29 Sep 2019 12:45:07 +0000</pubDate>
+				<category><![CDATA[環境構築]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=186</guid>
+
+					<description><![CDATA[はじめに ctrl + spaceで直接入力、shift + spaceで日本語と切り替える方法を説明します。 一つのショートカットでオンオフだと入力メソッドが日本語か直接入力かわからず使いにくいですが、別々のショートカ [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>ctrl + spaceで直接入力、shift + spaceで日本語と切り替える方法を説明します。<br />
+一つのショートカットでオンオフだと入力メソッドが日本語か直接入力かわからず使いにくいですが、別々のショートカットを設定すると一発でわかるのでおすすめです。</p>
+<h2>開発環境</h2>
+<p>Linux Mint 19.2</p>
+<h2>手順</h2>
+<p>まず 「Fcitx設定」を開きます。<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-21-23-25-500x286.png" alt="" /></p>
+<p>ここでもし違う入力メソッドが設定されていた場合には下の「-」で削除、「+」で追加してください。</p>
+<p>次に全体設定のタブに移動し、右下のShow Advanced Options のチェックを入れてください。<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-21-34-06-500x286.png" alt="" /><br />
+このような画面が出ます。<br />
+入力メソッドのオンオフを「空」にします。「Zenkakuhankaku」の部分を選択し、Escで空にできます。</p>
+<p>あとは以下のように設定します。<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2019/09/Screenshot-from-2019-09-29-21-41-15-500x286.png" alt="" /><br />
+これで ctrl + spaceで直接入力、shift + spaceで日本語にできました。</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/set-up/linux-mint-change-language/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>自分の環境</title>
+		<link>https://blog.so-ta.net/set-up/favorite/</link>
+					<comments>https://blog.so-ta.net/set-up/favorite/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sun, 04 Aug 2019 04:21:25 +0000</pubDate>
+				<category><![CDATA[環境構築]]></category>
+		<category><![CDATA[Linux Mint]]></category>
+		<category><![CDATA[VScode]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=30</guid>
+
+					<description><![CDATA[今回は自分がメインで使っているものを紹介します。 ちなみに画像はうちのネコです。かわいいです。 使っているもの OS Linux Mint 19.1 Tessa (cinnamon) Ubuntuから派生したディストリビ [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>今回は自分がメインで使っているものを紹介します。<br />
+ちなみに画像はうちのネコです。かわいいです。</p>
+<h2>使っているもの</h2>
+<h3>OS</h3>
+<h4>Linux Mint 19.1 Tessa (cinnamon)</h4>
+<p>Ubuntuから派生したディストリビューションです。<br />
+デザインがよく、軽いので気に入っています。</p>
+<h3>エディタ</h3>
+<h4>Visual Studio Code</h4>
+<p>言わずとしれた有名エディタ。拡張機能も充実していて何でもできるイメージ。<br />
+これを使いこなすのが自分の目標の一つでもある。</p>
+<h3>キーボード</h3>
+<h4>東プレ REALFORCE 86U</h4>
+<p>研究室で余っていたもの。とても打ちやすい。<br />
+値段を知ってマジでびっくりしたのはいい思い出。</p>
+<h3>ソフトウェア</h3>
+<h4>Docker</h4>
+<p>環境構築に使う、仮想化環境のためのソフトウェア。<br />
+仮想環境って本環境汚さないから結構好き。<br />
+Dockerについての記事をいつか書こうと思っている。</p>
+<h4>Kubernetes</h4>
+<p>Dockerなどでコンテナ化したアプリを管理するためのソフトウェア。<br />
+卒業研究のために仲良くしなければならない奴のひとり。</p>
+<h2>おわりに</h2>
+<p>以上、メインメンバー達でした。<br />
+今後記事を書く際には最低限の環境を記述する予定ですが、<br />
+書かれていない場合はこれらを使っていると思って下さい。</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/set-up/favorite/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

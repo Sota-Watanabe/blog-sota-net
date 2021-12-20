@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>卒業研究紹介サイト  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/thesis-site/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Sat, 17 Oct 2020 08:54:27 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>卒業研究紹介サイト  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>AWSで静的ウェブサイトを独自(サブ)ドメインのHTTPSで公開した話</title>
+		<link>https://blog.so-ta.net/thesis-site/aws-static-site-sub-domain-https/</link>
+					<comments>https://blog.so-ta.net/thesis-site/aws-static-site-sub-domain-https/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sat, 17 Oct 2020 08:54:26 +0000</pubDate>
+				<category><![CDATA[卒業研究紹介サイト]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=734</guid>
+
+					<description><![CDATA[はじめに 以前、静的ウェブサイトをGitHub Pagesで公開したことがありました。今回はそれのAWSバージョンです。なぜやったかと言われれば、やったことないからやりました。 GitHub Pages に比べ、複雑でい [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<h2>はじめに</h2>
+
+
+
+<p><a target="_blank" href="https://blog.so-ta.net/category/portfolio/">以前、静的ウェブサイトをGitHub Pagesで公開<span class="fa fa-external-link internal-icon anchor-icon"></span></a>したことがありました。今回はそれのAWSバージョンです。なぜやったかと言われれば、やったことないからやりました。</p>
+
+
+
+<p>GitHub Pages に比べ、複雑でいろいろ設定が必要でしたが、面白かったです。AWSがちょっとだけ分かった気がします。</p>
+
+
+
+<h2>AWSでコンテンツを配信するには</h2>
+
+
+
+<p>今回AWSの配信方法についていろいろ調べてみた結果、<a rel="noopener" target="_blank" href="https://dev.classmethod.jp/articles/static-contents-delivery-patterns/">このサイト<span class="fa fa-external-link external-icon anchor-icon"></span></a>が1番いいと思いました。</p>
+
+
+
+<p>最初はS3だけで公開していました。上記のサイトでいう「小結」ですね。ちょっと違うのはDNSを設定することで独自ドメインで公開していました。</p>
+
+
+
+<p>この方法はとっても簡単で素晴らしいのですが、HTTPSができないというのが個人的に許せませんでした。（パフォーマンスもあまりよろしくないそうですが自分のサイトはそこまでアクセスはないので&#8230;）</p>
+
+
+
+<p>なので「横綱」で構築してみました。一応言葉で説明すると、アクセスをRoute 53のAレコードで CloudFrontがある場所を示すという構成です。</p>
+
+
+
+<h2>最終構成</h2>
+
+
+
+<p>最終的にはこのような構成になりました。今回はthesis.so-ta.netというURLにアクセスすると自分が作成したサイトが表示されます。</p>
+
+
+
+<figure class="wp-block-image size-large"><img loading="lazy" width="800" height="450" src="https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-800x450.png" alt="" class="wp-image-740" srcset="https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-800x450.png 800w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-500x281.png 500w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-768x432.png 768w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-1536x864.png 1536w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-120x68.png 120w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-160x90.png 160w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み-320x180.png 320w, https://blog.so-ta.net/wp/wp-content/uploads/2020/10/thesis-siteの仕組み.png 1600w" sizes="(max-width: 800px) 100vw, 800px" /></figure>
+
+
+
+<p>開発者 (サイトを作る人) はGitHubにコードを書くだけ。コードを書くと、GitHub Actionsが動き、S3にアップロードされる。S3は変更があったらBuildされるのでここで静的ウェブサイトのデータが完成する。それをCDNであるCloudFrontに置いておくことで速く、負荷分散に強くなる。</p>
+
+
+
+<p>ユーザ(サイトを見る人)側の動きはthesis.so-ta.netをみようとするとまず、Google DomainsのDNSに飛ぶ。Google Domains DNSではthesisというサブドメインはNSレコードでRoute 53に委任してあるので、Route 53にIPアドレスを聞きに行く。Route 53はCloudFrontのIPアドレスを知っているので渡す。IPアドレスが分かったので、ユーザはCloudFrontをみに行き、データを取得する。</p>
+
+
+
+<h2>参考にしたサイト</h2>
+
+
+
+<p>参考にしたサイトを載せておきます。</p>
+
+
+
+<p>大体の手順</p>
+
+
+
+<ul><li><a rel="noopener" target="_blank" href="https://s8a.jp/vue-js-github-aws-s3-auto-deploy">https://s8a.jp/vue-js-github-aws-s3-auto-deploy<span class="fa fa-external-link external-icon anchor-icon"></span></a></li></ul>
+
+
+
+<p>HTTPSにする方法</p>
+
+
+
+<ul><li><a rel="noopener" target="_blank" href="https://dev.classmethod.jp/articles/tls-for-s3-web-hosting-with-cloudfront/">https://dev.classmethod.jp/articles/tls-for-s3-web-hosting-with-cloudfront/<span class="fa fa-external-link external-icon anchor-icon"></span></a></li></ul>
+
+
+
+<p>Google Domainsのサブドメイン をRoute 53に委任する方法</p>
+
+
+
+<ul><li><a rel="noopener" target="_blank" href="https://dev.classmethod.jp/articles/create-subdomain-on-route53/">https://dev.classmethod.jp/articles/create-subdomain-on-route53/<span class="fa fa-external-link external-icon anchor-icon"></span></a></li></ul>
+
+
+
+<p>AWSのコンテンツ配信の方法をまとめたサイト (おすすめ) </p>
+
+
+
+<ul><li><a rel="noopener" target="_blank" href="https://dev.classmethod.jp/articles/static-contents-delivery-patterns/">https://dev.classmethod.jp/articles/static-contents-delivery-patterns/<span class="fa fa-external-link external-icon anchor-icon"></span></a></li></ul>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/thesis-site/aws-static-site-sub-domain-https/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

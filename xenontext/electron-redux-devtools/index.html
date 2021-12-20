@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  
+  <!-- preconnect dns-prefetch -->
+<link rel="preconnect dns-prefetch" href="//www.googletagmanager.com">
+<link rel="preconnect dns-prefetch" href="//www.google-analytics.com">
+<link rel="preconnect dns-prefetch" href="//ajax.googleapis.com">
+<link rel="preconnect dns-prefetch" href="//cdnjs.cloudflare.com">
+<link rel="preconnect dns-prefetch" href="//pagead2.googlesyndication.com">
+<link rel="preconnect dns-prefetch" href="//googleads.g.doubleclick.net">
+<link rel="preconnect dns-prefetch" href="//tpc.googlesyndication.com">
+<link rel="preconnect dns-prefetch" href="//ad.doubleclick.net">
+<link rel="preconnect dns-prefetch" href="//www.gstatic.com">
+<link rel="preconnect dns-prefetch" href="//cse.google.com">
+<link rel="preconnect dns-prefetch" href="//fonts.gstatic.com">
+<link rel="preconnect dns-prefetch" href="//fonts.googleapis.com">
+<link rel="preconnect dns-prefetch" href="//cms.quantserve.com">
+<link rel="preconnect dns-prefetch" href="//secure.gravatar.com">
+<link rel="preconnect dns-prefetch" href="//cdn.syndication.twimg.com">
+<link rel="preconnect dns-prefetch" href="//cdn.jsdelivr.net">
+<link rel="preconnect dns-prefetch" href="//images-fe.ssl-images-amazon.com">
+<link rel="preconnect dns-prefetch" href="//completion.amazon.com">
+<link rel="preconnect dns-prefetch" href="//m.media-amazon.com">
+<link rel="preconnect dns-prefetch" href="//i.moshimo.com">
+<link rel="preconnect dns-prefetch" href="//aml.valuecommerce.com">
+<link rel="preconnect dns-prefetch" href="//dalc.valuecommerce.com">
+<link rel="preconnect dns-prefetch" href="//dalb.valuecommerce.com">
+<title>electronでRedux DevToolsを使う!  |  そーたの技術ブログ</title>
+
+<!-- OGP -->
+<meta property="og:type" content="article">
+<meta property="og:description" content="はじめにelectron と Reduxを使ってエディタを作成しているんですが, やっぱり動的にReduxを操作したいってことでRedux DevTools Extensionを使用することにしました. ついでにReactのDevTools">
+<meta property="og:title" content="electronでRedux DevToolsを使う!">
+<meta property="og:url" content="https://blog.so-ta.net/xenontext/electron-redux-devtools/">
+<meta property="og:image" content="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools.png">
+<meta property="og:site_name" content="そーたの技術ブログ">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2020-08-19T22:07:58+09:00">
+<meta property="article:modified_time" content="2020-08-19T22:07:58+09:00">
+<meta property="article:section" content="XenonText">
+<meta property="article:tag" content="React.js">
+<meta property="article:tag" content="redux">
+<!-- /OGP -->
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:description" content="はじめにelectron と Reduxを使ってエディタを作成しているんですが, やっぱり動的にReduxを操作したいってことでRedux DevTools Extensionを使用することにしました. ついでにReactのDevTools">
+<meta property="twitter:title" content="electronでRedux DevToolsを使う!">
+<meta property="twitter:url" content="https://blog.so-ta.net/xenontext/electron-redux-devtools/">
+<meta name="twitter:image" content="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools.png">
+<meta name="twitter:domain" content="blog.so-ta.net">
+<meta name="twitter:creator" content="@Sota___Watanabe">
+<meta name="twitter:site" content="@Sota___Watanabe">
+<!-- /Twitter Card -->
+<link rel="dns-prefetch" href="//ajax.googleapis.com">
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="//s.w.org">
+<link rel="alternate" type="application/rss+xml" title="そーたの技術ブログ &raquo; フィード" href="https://blog.so-ta.net/feed/">
+<link rel="alternate" type="application/rss+xml" title="そーたの技術ブログ &raquo; コメントフィード" href="https://blog.so-ta.net/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="そーたの技術ブログ &raquo; electronでRedux DevToolsを使う! のコメントのフィード" href="https://blog.so-ta.net/xenontext/electron-redux-devtools/feed/">
+<link rel="stylesheet" id="cocoon-style-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/style.css?ver=5.5.7&#038;fver=20201017121922" media="all">
+<link rel="stylesheet" id="cocoon-keyframes-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/keyframes.css?ver=5.5.7&#038;fver=20201017121922" media="all">
+<link rel="stylesheet" id="font-awesome-style-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/webfonts/fontawesome/css/font-awesome.min.css?ver=5.5.7&#038;fver=20201017121917" media="all">
+<link rel="stylesheet" id="icomoon-style-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/webfonts/icomoon/style.css?ver=5.5.7&#038;fver=20201017121922" media="all">
+<link rel="stylesheet" id="code-highlight-style-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/plugins/highlight-js/styles/tomorrow-night.css?ver=5.5.7&#038;fver=20201017121916" media="all">
+<link rel="stylesheet" id="baguettebox-style-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/plugins/baguettebox/dist/baguetteBox.min.css?ver=5.5.7&#038;fver=20201017121916" media="all">
+<link rel="stylesheet" id="cocoon-skin-style-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/skins/bizarre-foods-blackburger/style.css?ver=5.5.7&#038;fver=20201017121916" media="all">
+<style id="cocoon-skin-style-inline-css">@media screen and (max-width:480px){.page-body,.menu-content{font-size:16px}}.main{width:860px}.sidebar{width:376px}@media screen and (max-width:1260px){.wrap{width:auto}.main,.sidebar,.sidebar-left .main,.sidebar-left .sidebar{margin:0 .5%}.main{width:67%}.sidebar{padding:10px;width:30%}.entry-card-thumb{width:38%}.entry-card-content{margin-left:40%}}body::after{content:url(https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/lib/analytics/access.php?post_id=582&post_type=post);visibility:hidden;position:absolute;bottom:0;right:0;width:1px;height:1px;overflow:hidden;display:inline!important}.toc-checkbox{display:none}.toc-content{visibility:hidden;height:0;opacity:.2;transition:all .5s ease-out}.toc-checkbox:checked~.toc-content{visibility:visible;padding-top:.6em;height:100%;opacity:1}.toc-title::after{content:'[開く]';margin-left:.5em;cursor:pointer;font-size:.8em}.toc-title:hover::after{text-decoration:underline}.toc-checkbox:checked+.toc-title::after{content:'[閉じる]'}.eye-catch-wrap{justify-content:center}#respond{display:none}.entry-content>*,.demo .entry-content p{line-height:2.5}.entry-content>*,.demo .entry-content p{margin-top:2.1em;margin-bottom:2.1em}.article .micro-top{margin-bottom:-2.31em}.article .micro-balloon{margin-bottom:-1.68em}.article .micro-bottom{margin-top:-2.31em}.article .micro-bottom.micro-balloon{margin-top:-1.68em;margin-bottom:2.1em}.blank-box.bb-key-color{border-color:#19448e}.iic-key-color li::before{color:#19448e}.blank-box.bb-tab.bb-key-color::before{background-color:#19448e}.tb-key-color .toggle-button{border:1px solid #19448e;background:#19448e;color:#fff}.tb-key-color .toggle-button::before{color:#ccc}.tb-key-color .toggle-checkbox:checked~.toggle-content{border-color:#19448e}.cb-key-color.caption-box{border-color:#19448e}.cb-key-color .caption-box-label{background-color:#19448e;color:#fff}.tcb-key-color .tab-caption-box-label{background-color:#19448e;color:#fff}.tcb-key-color .tab-caption-box-content{border-color:#19448e}.lb-key-color .label-box-content{border-color:#19448e}.mc-key-color{background-color:#19448e;color:#fff;border:0}.mc-key-color.micro-bottom::after{border-bottom-color:#19448e;border-top-color:transparent}.mc-key-color::before{border-top-color:transparent;border-bottom-color:transparent}.mc-key-color::after{border-top-color:#19448e}.btn-key-color,.btn-wrap.btn-wrap-key-color>a{background-color:#19448e}.has-text-color.has-key-color-color{color:#19448e}.has-background.has-key-color-background-color{background-color:#19448e}.article.page-body,body#tinymce.wp-editor{background-color:#fff}.article.page-body,.editor-post-title__block .editor-post-title__input,body#tinymce.wp-editor{color:#333}.body .has-key-color-background-color{background-color:#19448e}.body .has-key-color-color{color:#19448e}.body .has-key-color-border-color{border-color:#19448e}.btn-wrap.has-key-color-background-color>a{background-color:#19448e}.btn-wrap.has-key-color-color>a{color:#19448e}.btn-wrap.has-key-color-border-color>a{border-color:#19448e}.bb-tab.has-key-color-border-color .bb-label{background-color:#19448e}.toggle-wrap.has-key-color-border-color .toggle-button{background-color:#19448e}.toggle-wrap.has-key-color-border-color .toggle-button,.toggle-wrap.has-key-color-border-color .toggle-content{border-color:#19448e}.iconlist-box.has-key-color-icon-color li::before{color:#19448e}.micro-balloon.has-key-color-background-color{background-color:#19448e;border-color:transparent}.micro-balloon.has-key-color-background-color.micro-bottom::after{border-bottom-color:#19448e;border-top-color:transparent}.micro-balloon.has-key-color-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-key-color-background-color::after{border-top-color:#19448e}.micro-balloon.has-border-color.has-key-color-border-color{border-color:#19448e}.micro-balloon.micro-top.has-key-color-border-color::before{border-top-color:#19448e}.micro-balloon.micro-bottom.has-key-color-border-color::before{border-bottom-color:#19448e}.caption-box.has-key-color-border-color .box-label{background-color:#19448e}.tab-caption-box.has-key-color-border-color .box-label{background-color:#19448e}.tab-caption-box.has-key-color-border-color .box-content{border-color:#19448e}.tab-caption-box.has-key-color-background-color .box-content{background-color:#19448e}.label-box.has-key-color-border-color .box-content{border-color:#19448e}.label-box.has-key-color-background-color .box-content{background-color:#19448e}.sbp-l .speech-balloon.has-key-color-border-color::before{border-right-color:#19448e}.sbp-r .speech-balloon.has-key-color-border-color::before{border-left-color:#19448e}.sbp-l .speech-balloon.has-key-color-background-color::after{border-right-color:#19448e}.sbp-r .speech-balloon.has-key-color-background-color::after{border-left-color:#19448e}.sbs-line.sbp-r .speech-balloon.has-key-color-background-color{background-color:#19448e}.sbs-line.sbp-r .speech-balloon.has-key-color-border-color{border-color:#19448e}.speech-wrap.sbs-think .speech-balloon.has-key-color-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-key-color-border-color::after{border-color:#19448e}.sbs-think .speech-balloon.has-key-color-background-color::before,.sbs-think .speech-balloon.has-key-color-background-color::after{background-color:#19448e}.timeline-box.has-key-color-point-color .timeline-item::before{background-color:#19448e}.body .has-red-background-color{background-color:#e60033}.body .has-red-color{color:#e60033}.body .has-red-border-color{border-color:#e60033}.btn-wrap.has-red-background-color>a{background-color:#e60033}.btn-wrap.has-red-color>a{color:#e60033}.btn-wrap.has-red-border-color>a{border-color:#e60033}.bb-tab.has-red-border-color .bb-label{background-color:#e60033}.toggle-wrap.has-red-border-color .toggle-button{background-color:#e60033}.toggle-wrap.has-red-border-color .toggle-button,.toggle-wrap.has-red-border-color .toggle-content{border-color:#e60033}.iconlist-box.has-red-icon-color li::before{color:#e60033}.micro-balloon.has-red-background-color{background-color:#e60033;border-color:transparent}.micro-balloon.has-red-background-color.micro-bottom::after{border-bottom-color:#e60033;border-top-color:transparent}.micro-balloon.has-red-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-red-background-color::after{border-top-color:#e60033}.micro-balloon.has-border-color.has-red-border-color{border-color:#e60033}.micro-balloon.micro-top.has-red-border-color::before{border-top-color:#e60033}.micro-balloon.micro-bottom.has-red-border-color::before{border-bottom-color:#e60033}.caption-box.has-red-border-color .box-label{background-color:#e60033}.tab-caption-box.has-red-border-color .box-label{background-color:#e60033}.tab-caption-box.has-red-border-color .box-content{border-color:#e60033}.tab-caption-box.has-red-background-color .box-content{background-color:#e60033}.label-box.has-red-border-color .box-content{border-color:#e60033}.label-box.has-red-background-color .box-content{background-color:#e60033}.sbp-l .speech-balloon.has-red-border-color::before{border-right-color:#e60033}.sbp-r .speech-balloon.has-red-border-color::before{border-left-color:#e60033}.sbp-l .speech-balloon.has-red-background-color::after{border-right-color:#e60033}.sbp-r .speech-balloon.has-red-background-color::after{border-left-color:#e60033}.sbs-line.sbp-r .speech-balloon.has-red-background-color{background-color:#e60033}.sbs-line.sbp-r .speech-balloon.has-red-border-color{border-color:#e60033}.speech-wrap.sbs-think .speech-balloon.has-red-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-red-border-color::after{border-color:#e60033}.sbs-think .speech-balloon.has-red-background-color::before,.sbs-think .speech-balloon.has-red-background-color::after{background-color:#e60033}.timeline-box.has-red-point-color .timeline-item::before{background-color:#e60033}.body .has-pink-background-color{background-color:#e95295}.body .has-pink-color{color:#e95295}.body .has-pink-border-color{border-color:#e95295}.btn-wrap.has-pink-background-color>a{background-color:#e95295}.btn-wrap.has-pink-color>a{color:#e95295}.btn-wrap.has-pink-border-color>a{border-color:#e95295}.bb-tab.has-pink-border-color .bb-label{background-color:#e95295}.toggle-wrap.has-pink-border-color .toggle-button{background-color:#e95295}.toggle-wrap.has-pink-border-color .toggle-button,.toggle-wrap.has-pink-border-color .toggle-content{border-color:#e95295}.iconlist-box.has-pink-icon-color li::before{color:#e95295}.micro-balloon.has-pink-background-color{background-color:#e95295;border-color:transparent}.micro-balloon.has-pink-background-color.micro-bottom::after{border-bottom-color:#e95295;border-top-color:transparent}.micro-balloon.has-pink-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-pink-background-color::after{border-top-color:#e95295}.micro-balloon.has-border-color.has-pink-border-color{border-color:#e95295}.micro-balloon.micro-top.has-pink-border-color::before{border-top-color:#e95295}.micro-balloon.micro-bottom.has-pink-border-color::before{border-bottom-color:#e95295}.caption-box.has-pink-border-color .box-label{background-color:#e95295}.tab-caption-box.has-pink-border-color .box-label{background-color:#e95295}.tab-caption-box.has-pink-border-color .box-content{border-color:#e95295}.tab-caption-box.has-pink-background-color .box-content{background-color:#e95295}.label-box.has-pink-border-color .box-content{border-color:#e95295}.label-box.has-pink-background-color .box-content{background-color:#e95295}.sbp-l .speech-balloon.has-pink-border-color::before{border-right-color:#e95295}.sbp-r .speech-balloon.has-pink-border-color::before{border-left-color:#e95295}.sbp-l .speech-balloon.has-pink-background-color::after{border-right-color:#e95295}.sbp-r .speech-balloon.has-pink-background-color::after{border-left-color:#e95295}.sbs-line.sbp-r .speech-balloon.has-pink-background-color{background-color:#e95295}.sbs-line.sbp-r .speech-balloon.has-pink-border-color{border-color:#e95295}.speech-wrap.sbs-think .speech-balloon.has-pink-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-pink-border-color::after{border-color:#e95295}.sbs-think .speech-balloon.has-pink-background-color::before,.sbs-think .speech-balloon.has-pink-background-color::after{background-color:#e95295}.timeline-box.has-pink-point-color .timeline-item::before{background-color:#e95295}.body .has-purple-background-color{background-color:#884898}.body .has-purple-color{color:#884898}.body .has-purple-border-color{border-color:#884898}.btn-wrap.has-purple-background-color>a{background-color:#884898}.btn-wrap.has-purple-color>a{color:#884898}.btn-wrap.has-purple-border-color>a{border-color:#884898}.bb-tab.has-purple-border-color .bb-label{background-color:#884898}.toggle-wrap.has-purple-border-color .toggle-button{background-color:#884898}.toggle-wrap.has-purple-border-color .toggle-button,.toggle-wrap.has-purple-border-color .toggle-content{border-color:#884898}.iconlist-box.has-purple-icon-color li::before{color:#884898}.micro-balloon.has-purple-background-color{background-color:#884898;border-color:transparent}.micro-balloon.has-purple-background-color.micro-bottom::after{border-bottom-color:#884898;border-top-color:transparent}.micro-balloon.has-purple-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-purple-background-color::after{border-top-color:#884898}.micro-balloon.has-border-color.has-purple-border-color{border-color:#884898}.micro-balloon.micro-top.has-purple-border-color::before{border-top-color:#884898}.micro-balloon.micro-bottom.has-purple-border-color::before{border-bottom-color:#884898}.caption-box.has-purple-border-color .box-label{background-color:#884898}.tab-caption-box.has-purple-border-color .box-label{background-color:#884898}.tab-caption-box.has-purple-border-color .box-content{border-color:#884898}.tab-caption-box.has-purple-background-color .box-content{background-color:#884898}.label-box.has-purple-border-color .box-content{border-color:#884898}.label-box.has-purple-background-color .box-content{background-color:#884898}.sbp-l .speech-balloon.has-purple-border-color::before{border-right-color:#884898}.sbp-r .speech-balloon.has-purple-border-color::before{border-left-color:#884898}.sbp-l .speech-balloon.has-purple-background-color::after{border-right-color:#884898}.sbp-r .speech-balloon.has-purple-background-color::after{border-left-color:#884898}.sbs-line.sbp-r .speech-balloon.has-purple-background-color{background-color:#884898}.sbs-line.sbp-r .speech-balloon.has-purple-border-color{border-color:#884898}.speech-wrap.sbs-think .speech-balloon.has-purple-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-purple-border-color::after{border-color:#884898}.sbs-think .speech-balloon.has-purple-background-color::before,.sbs-think .speech-balloon.has-purple-background-color::after{background-color:#884898}.timeline-box.has-purple-point-color .timeline-item::before{background-color:#884898}.body .has-deep-background-color{background-color:#55295b}.body .has-deep-color{color:#55295b}.body .has-deep-border-color{border-color:#55295b}.btn-wrap.has-deep-background-color>a{background-color:#55295b}.btn-wrap.has-deep-color>a{color:#55295b}.btn-wrap.has-deep-border-color>a{border-color:#55295b}.bb-tab.has-deep-border-color .bb-label{background-color:#55295b}.toggle-wrap.has-deep-border-color .toggle-button{background-color:#55295b}.toggle-wrap.has-deep-border-color .toggle-button,.toggle-wrap.has-deep-border-color .toggle-content{border-color:#55295b}.iconlist-box.has-deep-icon-color li::before{color:#55295b}.micro-balloon.has-deep-background-color{background-color:#55295b;border-color:transparent}.micro-balloon.has-deep-background-color.micro-bottom::after{border-bottom-color:#55295b;border-top-color:transparent}.micro-balloon.has-deep-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-deep-background-color::after{border-top-color:#55295b}.micro-balloon.has-border-color.has-deep-border-color{border-color:#55295b}.micro-balloon.micro-top.has-deep-border-color::before{border-top-color:#55295b}.micro-balloon.micro-bottom.has-deep-border-color::before{border-bottom-color:#55295b}.caption-box.has-deep-border-color .box-label{background-color:#55295b}.tab-caption-box.has-deep-border-color .box-label{background-color:#55295b}.tab-caption-box.has-deep-border-color .box-content{border-color:#55295b}.tab-caption-box.has-deep-background-color .box-content{background-color:#55295b}.label-box.has-deep-border-color .box-content{border-color:#55295b}.label-box.has-deep-background-color .box-content{background-color:#55295b}.sbp-l .speech-balloon.has-deep-border-color::before{border-right-color:#55295b}.sbp-r .speech-balloon.has-deep-border-color::before{border-left-color:#55295b}.sbp-l .speech-balloon.has-deep-background-color::after{border-right-color:#55295b}.sbp-r .speech-balloon.has-deep-background-color::after{border-left-color:#55295b}.sbs-line.sbp-r .speech-balloon.has-deep-background-color{background-color:#55295b}.sbs-line.sbp-r .speech-balloon.has-deep-border-color{border-color:#55295b}.speech-wrap.sbs-think .speech-balloon.has-deep-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-deep-border-color::after{border-color:#55295b}.sbs-think .speech-balloon.has-deep-background-color::before,.sbs-think .speech-balloon.has-deep-background-color::after{background-color:#55295b}.timeline-box.has-deep-point-color .timeline-item::before{background-color:#55295b}.body .has-indigo-background-color{background-color:#1e50a2}.body .has-indigo-color{color:#1e50a2}.body .has-indigo-border-color{border-color:#1e50a2}.btn-wrap.has-indigo-background-color>a{background-color:#1e50a2}.btn-wrap.has-indigo-color>a{color:#1e50a2}.btn-wrap.has-indigo-border-color>a{border-color:#1e50a2}.bb-tab.has-indigo-border-color .bb-label{background-color:#1e50a2}.toggle-wrap.has-indigo-border-color .toggle-button{background-color:#1e50a2}.toggle-wrap.has-indigo-border-color .toggle-button,.toggle-wrap.has-indigo-border-color .toggle-content{border-color:#1e50a2}.iconlist-box.has-indigo-icon-color li::before{color:#1e50a2}.micro-balloon.has-indigo-background-color{background-color:#1e50a2;border-color:transparent}.micro-balloon.has-indigo-background-color.micro-bottom::after{border-bottom-color:#1e50a2;border-top-color:transparent}.micro-balloon.has-indigo-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-indigo-background-color::after{border-top-color:#1e50a2}.micro-balloon.has-border-color.has-indigo-border-color{border-color:#1e50a2}.micro-balloon.micro-top.has-indigo-border-color::before{border-top-color:#1e50a2}.micro-balloon.micro-bottom.has-indigo-border-color::before{border-bottom-color:#1e50a2}.caption-box.has-indigo-border-color .box-label{background-color:#1e50a2}.tab-caption-box.has-indigo-border-color .box-label{background-color:#1e50a2}.tab-caption-box.has-indigo-border-color .box-content{border-color:#1e50a2}.tab-caption-box.has-indigo-background-color .box-content{background-color:#1e50a2}.label-box.has-indigo-border-color .box-content{border-color:#1e50a2}.label-box.has-indigo-background-color .box-content{background-color:#1e50a2}.sbp-l .speech-balloon.has-indigo-border-color::before{border-right-color:#1e50a2}.sbp-r .speech-balloon.has-indigo-border-color::before{border-left-color:#1e50a2}.sbp-l .speech-balloon.has-indigo-background-color::after{border-right-color:#1e50a2}.sbp-r .speech-balloon.has-indigo-background-color::after{border-left-color:#1e50a2}.sbs-line.sbp-r .speech-balloon.has-indigo-background-color{background-color:#1e50a2}.sbs-line.sbp-r .speech-balloon.has-indigo-border-color{border-color:#1e50a2}.speech-wrap.sbs-think .speech-balloon.has-indigo-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-indigo-border-color::after{border-color:#1e50a2}.sbs-think .speech-balloon.has-indigo-background-color::before,.sbs-think .speech-balloon.has-indigo-background-color::after{background-color:#1e50a2}.timeline-box.has-indigo-point-color .timeline-item::before{background-color:#1e50a2}.body .has-blue-background-color{background-color:#0095d9}.body .has-blue-color{color:#0095d9}.body .has-blue-border-color{border-color:#0095d9}.btn-wrap.has-blue-background-color>a{background-color:#0095d9}.btn-wrap.has-blue-color>a{color:#0095d9}.btn-wrap.has-blue-border-color>a{border-color:#0095d9}.bb-tab.has-blue-border-color .bb-label{background-color:#0095d9}.toggle-wrap.has-blue-border-color .toggle-button{background-color:#0095d9}.toggle-wrap.has-blue-border-color .toggle-button,.toggle-wrap.has-blue-border-color .toggle-content{border-color:#0095d9}.iconlist-box.has-blue-icon-color li::before{color:#0095d9}.micro-balloon.has-blue-background-color{background-color:#0095d9;border-color:transparent}.micro-balloon.has-blue-background-color.micro-bottom::after{border-bottom-color:#0095d9;border-top-color:transparent}.micro-balloon.has-blue-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-blue-background-color::after{border-top-color:#0095d9}.micro-balloon.has-border-color.has-blue-border-color{border-color:#0095d9}.micro-balloon.micro-top.has-blue-border-color::before{border-top-color:#0095d9}.micro-balloon.micro-bottom.has-blue-border-color::before{border-bottom-color:#0095d9}.caption-box.has-blue-border-color .box-label{background-color:#0095d9}.tab-caption-box.has-blue-border-color .box-label{background-color:#0095d9}.tab-caption-box.has-blue-border-color .box-content{border-color:#0095d9}.tab-caption-box.has-blue-background-color .box-content{background-color:#0095d9}.label-box.has-blue-border-color .box-content{border-color:#0095d9}.label-box.has-blue-background-color .box-content{background-color:#0095d9}.sbp-l .speech-balloon.has-blue-border-color::before{border-right-color:#0095d9}.sbp-r .speech-balloon.has-blue-border-color::before{border-left-color:#0095d9}.sbp-l .speech-balloon.has-blue-background-color::after{border-right-color:#0095d9}.sbp-r .speech-balloon.has-blue-background-color::after{border-left-color:#0095d9}.sbs-line.sbp-r .speech-balloon.has-blue-background-color{background-color:#0095d9}.sbs-line.sbp-r .speech-balloon.has-blue-border-color{border-color:#0095d9}.speech-wrap.sbs-think .speech-balloon.has-blue-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-blue-border-color::after{border-color:#0095d9}.sbs-think .speech-balloon.has-blue-background-color::before,.sbs-think .speech-balloon.has-blue-background-color::after{background-color:#0095d9}.timeline-box.has-blue-point-color .timeline-item::before{background-color:#0095d9}.body .has-light-blue-background-color{background-color:#2ca9e1}.body .has-light-blue-color{color:#2ca9e1}.body .has-light-blue-border-color{border-color:#2ca9e1}.btn-wrap.has-light-blue-background-color>a{background-color:#2ca9e1}.btn-wrap.has-light-blue-color>a{color:#2ca9e1}.btn-wrap.has-light-blue-border-color>a{border-color:#2ca9e1}.bb-tab.has-light-blue-border-color .bb-label{background-color:#2ca9e1}.toggle-wrap.has-light-blue-border-color .toggle-button{background-color:#2ca9e1}.toggle-wrap.has-light-blue-border-color .toggle-button,.toggle-wrap.has-light-blue-border-color .toggle-content{border-color:#2ca9e1}.iconlist-box.has-light-blue-icon-color li::before{color:#2ca9e1}.micro-balloon.has-light-blue-background-color{background-color:#2ca9e1;border-color:transparent}.micro-balloon.has-light-blue-background-color.micro-bottom::after{border-bottom-color:#2ca9e1;border-top-color:transparent}.micro-balloon.has-light-blue-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-light-blue-background-color::after{border-top-color:#2ca9e1}.micro-balloon.has-border-color.has-light-blue-border-color{border-color:#2ca9e1}.micro-balloon.micro-top.has-light-blue-border-color::before{border-top-color:#2ca9e1}.micro-balloon.micro-bottom.has-light-blue-border-color::before{border-bottom-color:#2ca9e1}.caption-box.has-light-blue-border-color .box-label{background-color:#2ca9e1}.tab-caption-box.has-light-blue-border-color .box-label{background-color:#2ca9e1}.tab-caption-box.has-light-blue-border-color .box-content{border-color:#2ca9e1}.tab-caption-box.has-light-blue-background-color .box-content{background-color:#2ca9e1}.label-box.has-light-blue-border-color .box-content{border-color:#2ca9e1}.label-box.has-light-blue-background-color .box-content{background-color:#2ca9e1}.sbp-l .speech-balloon.has-light-blue-border-color::before{border-right-color:#2ca9e1}.sbp-r .speech-balloon.has-light-blue-border-color::before{border-left-color:#2ca9e1}.sbp-l .speech-balloon.has-light-blue-background-color::after{border-right-color:#2ca9e1}.sbp-r .speech-balloon.has-light-blue-background-color::after{border-left-color:#2ca9e1}.sbs-line.sbp-r .speech-balloon.has-light-blue-background-color{background-color:#2ca9e1}.sbs-line.sbp-r .speech-balloon.has-light-blue-border-color{border-color:#2ca9e1}.speech-wrap.sbs-think .speech-balloon.has-light-blue-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-light-blue-border-color::after{border-color:#2ca9e1}.sbs-think .speech-balloon.has-light-blue-background-color::before,.sbs-think .speech-balloon.has-light-blue-background-color::after{background-color:#2ca9e1}.timeline-box.has-light-blue-point-color .timeline-item::before{background-color:#2ca9e1}.body .has-cyan-background-color{background-color:#00a3af}.body .has-cyan-color{color:#00a3af}.body .has-cyan-border-color{border-color:#00a3af}.btn-wrap.has-cyan-background-color>a{background-color:#00a3af}.btn-wrap.has-cyan-color>a{color:#00a3af}.btn-wrap.has-cyan-border-color>a{border-color:#00a3af}.bb-tab.has-cyan-border-color .bb-label{background-color:#00a3af}.toggle-wrap.has-cyan-border-color .toggle-button{background-color:#00a3af}.toggle-wrap.has-cyan-border-color .toggle-button,.toggle-wrap.has-cyan-border-color .toggle-content{border-color:#00a3af}.iconlist-box.has-cyan-icon-color li::before{color:#00a3af}.micro-balloon.has-cyan-background-color{background-color:#00a3af;border-color:transparent}.micro-balloon.has-cyan-background-color.micro-bottom::after{border-bottom-color:#00a3af;border-top-color:transparent}.micro-balloon.has-cyan-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-cyan-background-color::after{border-top-color:#00a3af}.micro-balloon.has-border-color.has-cyan-border-color{border-color:#00a3af}.micro-balloon.micro-top.has-cyan-border-color::before{border-top-color:#00a3af}.micro-balloon.micro-bottom.has-cyan-border-color::before{border-bottom-color:#00a3af}.caption-box.has-cyan-border-color .box-label{background-color:#00a3af}.tab-caption-box.has-cyan-border-color .box-label{background-color:#00a3af}.tab-caption-box.has-cyan-border-color .box-content{border-color:#00a3af}.tab-caption-box.has-cyan-background-color .box-content{background-color:#00a3af}.label-box.has-cyan-border-color .box-content{border-color:#00a3af}.label-box.has-cyan-background-color .box-content{background-color:#00a3af}.sbp-l .speech-balloon.has-cyan-border-color::before{border-right-color:#00a3af}.sbp-r .speech-balloon.has-cyan-border-color::before{border-left-color:#00a3af}.sbp-l .speech-balloon.has-cyan-background-color::after{border-right-color:#00a3af}.sbp-r .speech-balloon.has-cyan-background-color::after{border-left-color:#00a3af}.sbs-line.sbp-r .speech-balloon.has-cyan-background-color{background-color:#00a3af}.sbs-line.sbp-r .speech-balloon.has-cyan-border-color{border-color:#00a3af}.speech-wrap.sbs-think .speech-balloon.has-cyan-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-cyan-border-color::after{border-color:#00a3af}.sbs-think .speech-balloon.has-cyan-background-color::before,.sbs-think .speech-balloon.has-cyan-background-color::after{background-color:#00a3af}.timeline-box.has-cyan-point-color .timeline-item::before{background-color:#00a3af}.body .has-teal-background-color{background-color:#007b43}.body .has-teal-color{color:#007b43}.body .has-teal-border-color{border-color:#007b43}.btn-wrap.has-teal-background-color>a{background-color:#007b43}.btn-wrap.has-teal-color>a{color:#007b43}.btn-wrap.has-teal-border-color>a{border-color:#007b43}.bb-tab.has-teal-border-color .bb-label{background-color:#007b43}.toggle-wrap.has-teal-border-color .toggle-button{background-color:#007b43}.toggle-wrap.has-teal-border-color .toggle-button,.toggle-wrap.has-teal-border-color .toggle-content{border-color:#007b43}.iconlist-box.has-teal-icon-color li::before{color:#007b43}.micro-balloon.has-teal-background-color{background-color:#007b43;border-color:transparent}.micro-balloon.has-teal-background-color.micro-bottom::after{border-bottom-color:#007b43;border-top-color:transparent}.micro-balloon.has-teal-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-teal-background-color::after{border-top-color:#007b43}.micro-balloon.has-border-color.has-teal-border-color{border-color:#007b43}.micro-balloon.micro-top.has-teal-border-color::before{border-top-color:#007b43}.micro-balloon.micro-bottom.has-teal-border-color::before{border-bottom-color:#007b43}.caption-box.has-teal-border-color .box-label{background-color:#007b43}.tab-caption-box.has-teal-border-color .box-label{background-color:#007b43}.tab-caption-box.has-teal-border-color .box-content{border-color:#007b43}.tab-caption-box.has-teal-background-color .box-content{background-color:#007b43}.label-box.has-teal-border-color .box-content{border-color:#007b43}.label-box.has-teal-background-color .box-content{background-color:#007b43}.sbp-l .speech-balloon.has-teal-border-color::before{border-right-color:#007b43}.sbp-r .speech-balloon.has-teal-border-color::before{border-left-color:#007b43}.sbp-l .speech-balloon.has-teal-background-color::after{border-right-color:#007b43}.sbp-r .speech-balloon.has-teal-background-color::after{border-left-color:#007b43}.sbs-line.sbp-r .speech-balloon.has-teal-background-color{background-color:#007b43}.sbs-line.sbp-r .speech-balloon.has-teal-border-color{border-color:#007b43}.speech-wrap.sbs-think .speech-balloon.has-teal-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-teal-border-color::after{border-color:#007b43}.sbs-think .speech-balloon.has-teal-background-color::before,.sbs-think .speech-balloon.has-teal-background-color::after{background-color:#007b43}.timeline-box.has-teal-point-color .timeline-item::before{background-color:#007b43}.body .has-green-background-color{background-color:#3eb370}.body .has-green-color{color:#3eb370}.body .has-green-border-color{border-color:#3eb370}.btn-wrap.has-green-background-color>a{background-color:#3eb370}.btn-wrap.has-green-color>a{color:#3eb370}.btn-wrap.has-green-border-color>a{border-color:#3eb370}.bb-tab.has-green-border-color .bb-label{background-color:#3eb370}.toggle-wrap.has-green-border-color .toggle-button{background-color:#3eb370}.toggle-wrap.has-green-border-color .toggle-button,.toggle-wrap.has-green-border-color .toggle-content{border-color:#3eb370}.iconlist-box.has-green-icon-color li::before{color:#3eb370}.micro-balloon.has-green-background-color{background-color:#3eb370;border-color:transparent}.micro-balloon.has-green-background-color.micro-bottom::after{border-bottom-color:#3eb370;border-top-color:transparent}.micro-balloon.has-green-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-green-background-color::after{border-top-color:#3eb370}.micro-balloon.has-border-color.has-green-border-color{border-color:#3eb370}.micro-balloon.micro-top.has-green-border-color::before{border-top-color:#3eb370}.micro-balloon.micro-bottom.has-green-border-color::before{border-bottom-color:#3eb370}.caption-box.has-green-border-color .box-label{background-color:#3eb370}.tab-caption-box.has-green-border-color .box-label{background-color:#3eb370}.tab-caption-box.has-green-border-color .box-content{border-color:#3eb370}.tab-caption-box.has-green-background-color .box-content{background-color:#3eb370}.label-box.has-green-border-color .box-content{border-color:#3eb370}.label-box.has-green-background-color .box-content{background-color:#3eb370}.sbp-l .speech-balloon.has-green-border-color::before{border-right-color:#3eb370}.sbp-r .speech-balloon.has-green-border-color::before{border-left-color:#3eb370}.sbp-l .speech-balloon.has-green-background-color::after{border-right-color:#3eb370}.sbp-r .speech-balloon.has-green-background-color::after{border-left-color:#3eb370}.sbs-line.sbp-r .speech-balloon.has-green-background-color{background-color:#3eb370}.sbs-line.sbp-r .speech-balloon.has-green-border-color{border-color:#3eb370}.speech-wrap.sbs-think .speech-balloon.has-green-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-green-border-color::after{border-color:#3eb370}.sbs-think .speech-balloon.has-green-background-color::before,.sbs-think .speech-balloon.has-green-background-color::after{background-color:#3eb370}.timeline-box.has-green-point-color .timeline-item::before{background-color:#3eb370}.body .has-light-green-background-color{background-color:#8bc34a}.body .has-light-green-color{color:#8bc34a}.body .has-light-green-border-color{border-color:#8bc34a}.btn-wrap.has-light-green-background-color>a{background-color:#8bc34a}.btn-wrap.has-light-green-color>a{color:#8bc34a}.btn-wrap.has-light-green-border-color>a{border-color:#8bc34a}.bb-tab.has-light-green-border-color .bb-label{background-color:#8bc34a}.toggle-wrap.has-light-green-border-color .toggle-button{background-color:#8bc34a}.toggle-wrap.has-light-green-border-color .toggle-button,.toggle-wrap.has-light-green-border-color .toggle-content{border-color:#8bc34a}.iconlist-box.has-light-green-icon-color li::before{color:#8bc34a}.micro-balloon.has-light-green-background-color{background-color:#8bc34a;border-color:transparent}.micro-balloon.has-light-green-background-color.micro-bottom::after{border-bottom-color:#8bc34a;border-top-color:transparent}.micro-balloon.has-light-green-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-light-green-background-color::after{border-top-color:#8bc34a}.micro-balloon.has-border-color.has-light-green-border-color{border-color:#8bc34a}.micro-balloon.micro-top.has-light-green-border-color::before{border-top-color:#8bc34a}.micro-balloon.micro-bottom.has-light-green-border-color::before{border-bottom-color:#8bc34a}.caption-box.has-light-green-border-color .box-label{background-color:#8bc34a}.tab-caption-box.has-light-green-border-color .box-label{background-color:#8bc34a}.tab-caption-box.has-light-green-border-color .box-content{border-color:#8bc34a}.tab-caption-box.has-light-green-background-color .box-content{background-color:#8bc34a}.label-box.has-light-green-border-color .box-content{border-color:#8bc34a}.label-box.has-light-green-background-color .box-content{background-color:#8bc34a}.sbp-l .speech-balloon.has-light-green-border-color::before{border-right-color:#8bc34a}.sbp-r .speech-balloon.has-light-green-border-color::before{border-left-color:#8bc34a}.sbp-l .speech-balloon.has-light-green-background-color::after{border-right-color:#8bc34a}.sbp-r .speech-balloon.has-light-green-background-color::after{border-left-color:#8bc34a}.sbs-line.sbp-r .speech-balloon.has-light-green-background-color{background-color:#8bc34a}.sbs-line.sbp-r .speech-balloon.has-light-green-border-color{border-color:#8bc34a}.speech-wrap.sbs-think .speech-balloon.has-light-green-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-light-green-border-color::after{border-color:#8bc34a}.sbs-think .speech-balloon.has-light-green-background-color::before,.sbs-think .speech-balloon.has-light-green-background-color::after{background-color:#8bc34a}.timeline-box.has-light-green-point-color .timeline-item::before{background-color:#8bc34a}.body .has-lime-background-color{background-color:#c3d825}.body .has-lime-color{color:#c3d825}.body .has-lime-border-color{border-color:#c3d825}.btn-wrap.has-lime-background-color>a{background-color:#c3d825}.btn-wrap.has-lime-color>a{color:#c3d825}.btn-wrap.has-lime-border-color>a{border-color:#c3d825}.bb-tab.has-lime-border-color .bb-label{background-color:#c3d825}.toggle-wrap.has-lime-border-color .toggle-button{background-color:#c3d825}.toggle-wrap.has-lime-border-color .toggle-button,.toggle-wrap.has-lime-border-color .toggle-content{border-color:#c3d825}.iconlist-box.has-lime-icon-color li::before{color:#c3d825}.micro-balloon.has-lime-background-color{background-color:#c3d825;border-color:transparent}.micro-balloon.has-lime-background-color.micro-bottom::after{border-bottom-color:#c3d825;border-top-color:transparent}.micro-balloon.has-lime-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-lime-background-color::after{border-top-color:#c3d825}.micro-balloon.has-border-color.has-lime-border-color{border-color:#c3d825}.micro-balloon.micro-top.has-lime-border-color::before{border-top-color:#c3d825}.micro-balloon.micro-bottom.has-lime-border-color::before{border-bottom-color:#c3d825}.caption-box.has-lime-border-color .box-label{background-color:#c3d825}.tab-caption-box.has-lime-border-color .box-label{background-color:#c3d825}.tab-caption-box.has-lime-border-color .box-content{border-color:#c3d825}.tab-caption-box.has-lime-background-color .box-content{background-color:#c3d825}.label-box.has-lime-border-color .box-content{border-color:#c3d825}.label-box.has-lime-background-color .box-content{background-color:#c3d825}.sbp-l .speech-balloon.has-lime-border-color::before{border-right-color:#c3d825}.sbp-r .speech-balloon.has-lime-border-color::before{border-left-color:#c3d825}.sbp-l .speech-balloon.has-lime-background-color::after{border-right-color:#c3d825}.sbp-r .speech-balloon.has-lime-background-color::after{border-left-color:#c3d825}.sbs-line.sbp-r .speech-balloon.has-lime-background-color{background-color:#c3d825}.sbs-line.sbp-r .speech-balloon.has-lime-border-color{border-color:#c3d825}.speech-wrap.sbs-think .speech-balloon.has-lime-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-lime-border-color::after{border-color:#c3d825}.sbs-think .speech-balloon.has-lime-background-color::before,.sbs-think .speech-balloon.has-lime-background-color::after{background-color:#c3d825}.timeline-box.has-lime-point-color .timeline-item::before{background-color:#c3d825}.body .has-yellow-background-color{background-color:#ffd900}.body .has-yellow-color{color:#ffd900}.body .has-yellow-border-color{border-color:#ffd900}.btn-wrap.has-yellow-background-color>a{background-color:#ffd900}.btn-wrap.has-yellow-color>a{color:#ffd900}.btn-wrap.has-yellow-border-color>a{border-color:#ffd900}.bb-tab.has-yellow-border-color .bb-label{background-color:#ffd900}.toggle-wrap.has-yellow-border-color .toggle-button{background-color:#ffd900}.toggle-wrap.has-yellow-border-color .toggle-button,.toggle-wrap.has-yellow-border-color .toggle-content{border-color:#ffd900}.iconlist-box.has-yellow-icon-color li::before{color:#ffd900}.micro-balloon.has-yellow-background-color{background-color:#ffd900;border-color:transparent}.micro-balloon.has-yellow-background-color.micro-bottom::after{border-bottom-color:#ffd900;border-top-color:transparent}.micro-balloon.has-yellow-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-yellow-background-color::after{border-top-color:#ffd900}.micro-balloon.has-border-color.has-yellow-border-color{border-color:#ffd900}.micro-balloon.micro-top.has-yellow-border-color::before{border-top-color:#ffd900}.micro-balloon.micro-bottom.has-yellow-border-color::before{border-bottom-color:#ffd900}.caption-box.has-yellow-border-color .box-label{background-color:#ffd900}.tab-caption-box.has-yellow-border-color .box-label{background-color:#ffd900}.tab-caption-box.has-yellow-border-color .box-content{border-color:#ffd900}.tab-caption-box.has-yellow-background-color .box-content{background-color:#ffd900}.label-box.has-yellow-border-color .box-content{border-color:#ffd900}.label-box.has-yellow-background-color .box-content{background-color:#ffd900}.sbp-l .speech-balloon.has-yellow-border-color::before{border-right-color:#ffd900}.sbp-r .speech-balloon.has-yellow-border-color::before{border-left-color:#ffd900}.sbp-l .speech-balloon.has-yellow-background-color::after{border-right-color:#ffd900}.sbp-r .speech-balloon.has-yellow-background-color::after{border-left-color:#ffd900}.sbs-line.sbp-r .speech-balloon.has-yellow-background-color{background-color:#ffd900}.sbs-line.sbp-r .speech-balloon.has-yellow-border-color{border-color:#ffd900}.speech-wrap.sbs-think .speech-balloon.has-yellow-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-yellow-border-color::after{border-color:#ffd900}.sbs-think .speech-balloon.has-yellow-background-color::before,.sbs-think .speech-balloon.has-yellow-background-color::after{background-color:#ffd900}.timeline-box.has-yellow-point-color .timeline-item::before{background-color:#ffd900}.body .has-amber-background-color{background-color:#ffc107}.body .has-amber-color{color:#ffc107}.body .has-amber-border-color{border-color:#ffc107}.btn-wrap.has-amber-background-color>a{background-color:#ffc107}.btn-wrap.has-amber-color>a{color:#ffc107}.btn-wrap.has-amber-border-color>a{border-color:#ffc107}.bb-tab.has-amber-border-color .bb-label{background-color:#ffc107}.toggle-wrap.has-amber-border-color .toggle-button{background-color:#ffc107}.toggle-wrap.has-amber-border-color .toggle-button,.toggle-wrap.has-amber-border-color .toggle-content{border-color:#ffc107}.iconlist-box.has-amber-icon-color li::before{color:#ffc107}.micro-balloon.has-amber-background-color{background-color:#ffc107;border-color:transparent}.micro-balloon.has-amber-background-color.micro-bottom::after{border-bottom-color:#ffc107;border-top-color:transparent}.micro-balloon.has-amber-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-amber-background-color::after{border-top-color:#ffc107}.micro-balloon.has-border-color.has-amber-border-color{border-color:#ffc107}.micro-balloon.micro-top.has-amber-border-color::before{border-top-color:#ffc107}.micro-balloon.micro-bottom.has-amber-border-color::before{border-bottom-color:#ffc107}.caption-box.has-amber-border-color .box-label{background-color:#ffc107}.tab-caption-box.has-amber-border-color .box-label{background-color:#ffc107}.tab-caption-box.has-amber-border-color .box-content{border-color:#ffc107}.tab-caption-box.has-amber-background-color .box-content{background-color:#ffc107}.label-box.has-amber-border-color .box-content{border-color:#ffc107}.label-box.has-amber-background-color .box-content{background-color:#ffc107}.sbp-l .speech-balloon.has-amber-border-color::before{border-right-color:#ffc107}.sbp-r .speech-balloon.has-amber-border-color::before{border-left-color:#ffc107}.sbp-l .speech-balloon.has-amber-background-color::after{border-right-color:#ffc107}.sbp-r .speech-balloon.has-amber-background-color::after{border-left-color:#ffc107}.sbs-line.sbp-r .speech-balloon.has-amber-background-color{background-color:#ffc107}.sbs-line.sbp-r .speech-balloon.has-amber-border-color{border-color:#ffc107}.speech-wrap.sbs-think .speech-balloon.has-amber-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-amber-border-color::after{border-color:#ffc107}.sbs-think .speech-balloon.has-amber-background-color::before,.sbs-think .speech-balloon.has-amber-background-color::after{background-color:#ffc107}.timeline-box.has-amber-point-color .timeline-item::before{background-color:#ffc107}.body .has-orange-background-color{background-color:#f39800}.body .has-orange-color{color:#f39800}.body .has-orange-border-color{border-color:#f39800}.btn-wrap.has-orange-background-color>a{background-color:#f39800}.btn-wrap.has-orange-color>a{color:#f39800}.btn-wrap.has-orange-border-color>a{border-color:#f39800}.bb-tab.has-orange-border-color .bb-label{background-color:#f39800}.toggle-wrap.has-orange-border-color .toggle-button{background-color:#f39800}.toggle-wrap.has-orange-border-color .toggle-button,.toggle-wrap.has-orange-border-color .toggle-content{border-color:#f39800}.iconlist-box.has-orange-icon-color li::before{color:#f39800}.micro-balloon.has-orange-background-color{background-color:#f39800;border-color:transparent}.micro-balloon.has-orange-background-color.micro-bottom::after{border-bottom-color:#f39800;border-top-color:transparent}.micro-balloon.has-orange-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-orange-background-color::after{border-top-color:#f39800}.micro-balloon.has-border-color.has-orange-border-color{border-color:#f39800}.micro-balloon.micro-top.has-orange-border-color::before{border-top-color:#f39800}.micro-balloon.micro-bottom.has-orange-border-color::before{border-bottom-color:#f39800}.caption-box.has-orange-border-color .box-label{background-color:#f39800}.tab-caption-box.has-orange-border-color .box-label{background-color:#f39800}.tab-caption-box.has-orange-border-color .box-content{border-color:#f39800}.tab-caption-box.has-orange-background-color .box-content{background-color:#f39800}.label-box.has-orange-border-color .box-content{border-color:#f39800}.label-box.has-orange-background-color .box-content{background-color:#f39800}.sbp-l .speech-balloon.has-orange-border-color::before{border-right-color:#f39800}.sbp-r .speech-balloon.has-orange-border-color::before{border-left-color:#f39800}.sbp-l .speech-balloon.has-orange-background-color::after{border-right-color:#f39800}.sbp-r .speech-balloon.has-orange-background-color::after{border-left-color:#f39800}.sbs-line.sbp-r .speech-balloon.has-orange-background-color{background-color:#f39800}.sbs-line.sbp-r .speech-balloon.has-orange-border-color{border-color:#f39800}.speech-wrap.sbs-think .speech-balloon.has-orange-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-orange-border-color::after{border-color:#f39800}.sbs-think .speech-balloon.has-orange-background-color::before,.sbs-think .speech-balloon.has-orange-background-color::after{background-color:#f39800}.timeline-box.has-orange-point-color .timeline-item::before{background-color:#f39800}.body .has-deep-orange-background-color{background-color:#ea5506}.body .has-deep-orange-color{color:#ea5506}.body .has-deep-orange-border-color{border-color:#ea5506}.btn-wrap.has-deep-orange-background-color>a{background-color:#ea5506}.btn-wrap.has-deep-orange-color>a{color:#ea5506}.btn-wrap.has-deep-orange-border-color>a{border-color:#ea5506}.bb-tab.has-deep-orange-border-color .bb-label{background-color:#ea5506}.toggle-wrap.has-deep-orange-border-color .toggle-button{background-color:#ea5506}.toggle-wrap.has-deep-orange-border-color .toggle-button,.toggle-wrap.has-deep-orange-border-color .toggle-content{border-color:#ea5506}.iconlist-box.has-deep-orange-icon-color li::before{color:#ea5506}.micro-balloon.has-deep-orange-background-color{background-color:#ea5506;border-color:transparent}.micro-balloon.has-deep-orange-background-color.micro-bottom::after{border-bottom-color:#ea5506;border-top-color:transparent}.micro-balloon.has-deep-orange-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-deep-orange-background-color::after{border-top-color:#ea5506}.micro-balloon.has-border-color.has-deep-orange-border-color{border-color:#ea5506}.micro-balloon.micro-top.has-deep-orange-border-color::before{border-top-color:#ea5506}.micro-balloon.micro-bottom.has-deep-orange-border-color::before{border-bottom-color:#ea5506}.caption-box.has-deep-orange-border-color .box-label{background-color:#ea5506}.tab-caption-box.has-deep-orange-border-color .box-label{background-color:#ea5506}.tab-caption-box.has-deep-orange-border-color .box-content{border-color:#ea5506}.tab-caption-box.has-deep-orange-background-color .box-content{background-color:#ea5506}.label-box.has-deep-orange-border-color .box-content{border-color:#ea5506}.label-box.has-deep-orange-background-color .box-content{background-color:#ea5506}.sbp-l .speech-balloon.has-deep-orange-border-color::before{border-right-color:#ea5506}.sbp-r .speech-balloon.has-deep-orange-border-color::before{border-left-color:#ea5506}.sbp-l .speech-balloon.has-deep-orange-background-color::after{border-right-color:#ea5506}.sbp-r .speech-balloon.has-deep-orange-background-color::after{border-left-color:#ea5506}.sbs-line.sbp-r .speech-balloon.has-deep-orange-background-color{background-color:#ea5506}.sbs-line.sbp-r .speech-balloon.has-deep-orange-border-color{border-color:#ea5506}.speech-wrap.sbs-think .speech-balloon.has-deep-orange-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-deep-orange-border-color::after{border-color:#ea5506}.sbs-think .speech-balloon.has-deep-orange-background-color::before,.sbs-think .speech-balloon.has-deep-orange-background-color::after{background-color:#ea5506}.timeline-box.has-deep-orange-point-color .timeline-item::before{background-color:#ea5506}.body .has-brown-background-color{background-color:#954e2a}.body .has-brown-color{color:#954e2a}.body .has-brown-border-color{border-color:#954e2a}.btn-wrap.has-brown-background-color>a{background-color:#954e2a}.btn-wrap.has-brown-color>a{color:#954e2a}.btn-wrap.has-brown-border-color>a{border-color:#954e2a}.bb-tab.has-brown-border-color .bb-label{background-color:#954e2a}.toggle-wrap.has-brown-border-color .toggle-button{background-color:#954e2a}.toggle-wrap.has-brown-border-color .toggle-button,.toggle-wrap.has-brown-border-color .toggle-content{border-color:#954e2a}.iconlist-box.has-brown-icon-color li::before{color:#954e2a}.micro-balloon.has-brown-background-color{background-color:#954e2a;border-color:transparent}.micro-balloon.has-brown-background-color.micro-bottom::after{border-bottom-color:#954e2a;border-top-color:transparent}.micro-balloon.has-brown-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-brown-background-color::after{border-top-color:#954e2a}.micro-balloon.has-border-color.has-brown-border-color{border-color:#954e2a}.micro-balloon.micro-top.has-brown-border-color::before{border-top-color:#954e2a}.micro-balloon.micro-bottom.has-brown-border-color::before{border-bottom-color:#954e2a}.caption-box.has-brown-border-color .box-label{background-color:#954e2a}.tab-caption-box.has-brown-border-color .box-label{background-color:#954e2a}.tab-caption-box.has-brown-border-color .box-content{border-color:#954e2a}.tab-caption-box.has-brown-background-color .box-content{background-color:#954e2a}.label-box.has-brown-border-color .box-content{border-color:#954e2a}.label-box.has-brown-background-color .box-content{background-color:#954e2a}.sbp-l .speech-balloon.has-brown-border-color::before{border-right-color:#954e2a}.sbp-r .speech-balloon.has-brown-border-color::before{border-left-color:#954e2a}.sbp-l .speech-balloon.has-brown-background-color::after{border-right-color:#954e2a}.sbp-r .speech-balloon.has-brown-background-color::after{border-left-color:#954e2a}.sbs-line.sbp-r .speech-balloon.has-brown-background-color{background-color:#954e2a}.sbs-line.sbp-r .speech-balloon.has-brown-border-color{border-color:#954e2a}.speech-wrap.sbs-think .speech-balloon.has-brown-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-brown-border-color::after{border-color:#954e2a}.sbs-think .speech-balloon.has-brown-background-color::before,.sbs-think .speech-balloon.has-brown-background-color::after{background-color:#954e2a}.timeline-box.has-brown-point-color .timeline-item::before{background-color:#954e2a}.body .has-grey-background-color{background-color:#949495}.body .has-grey-color{color:#949495}.body .has-grey-border-color{border-color:#949495}.btn-wrap.has-grey-background-color>a{background-color:#949495}.btn-wrap.has-grey-color>a{color:#949495}.btn-wrap.has-grey-border-color>a{border-color:#949495}.bb-tab.has-grey-border-color .bb-label{background-color:#949495}.toggle-wrap.has-grey-border-color .toggle-button{background-color:#949495}.toggle-wrap.has-grey-border-color .toggle-button,.toggle-wrap.has-grey-border-color .toggle-content{border-color:#949495}.iconlist-box.has-grey-icon-color li::before{color:#949495}.micro-balloon.has-grey-background-color{background-color:#949495;border-color:transparent}.micro-balloon.has-grey-background-color.micro-bottom::after{border-bottom-color:#949495;border-top-color:transparent}.micro-balloon.has-grey-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-grey-background-color::after{border-top-color:#949495}.micro-balloon.has-border-color.has-grey-border-color{border-color:#949495}.micro-balloon.micro-top.has-grey-border-color::before{border-top-color:#949495}.micro-balloon.micro-bottom.has-grey-border-color::before{border-bottom-color:#949495}.caption-box.has-grey-border-color .box-label{background-color:#949495}.tab-caption-box.has-grey-border-color .box-label{background-color:#949495}.tab-caption-box.has-grey-border-color .box-content{border-color:#949495}.tab-caption-box.has-grey-background-color .box-content{background-color:#949495}.label-box.has-grey-border-color .box-content{border-color:#949495}.label-box.has-grey-background-color .box-content{background-color:#949495}.sbp-l .speech-balloon.has-grey-border-color::before{border-right-color:#949495}.sbp-r .speech-balloon.has-grey-border-color::before{border-left-color:#949495}.sbp-l .speech-balloon.has-grey-background-color::after{border-right-color:#949495}.sbp-r .speech-balloon.has-grey-background-color::after{border-left-color:#949495}.sbs-line.sbp-r .speech-balloon.has-grey-background-color{background-color:#949495}.sbs-line.sbp-r .speech-balloon.has-grey-border-color{border-color:#949495}.speech-wrap.sbs-think .speech-balloon.has-grey-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-grey-border-color::after{border-color:#949495}.sbs-think .speech-balloon.has-grey-background-color::before,.sbs-think .speech-balloon.has-grey-background-color::after{background-color:#949495}.timeline-box.has-grey-point-color .timeline-item::before{background-color:#949495}.body .has-black-background-color{background-color:#333}.body .has-black-color{color:#333}.body .has-black-border-color{border-color:#333}.btn-wrap.has-black-background-color>a{background-color:#333}.btn-wrap.has-black-color>a{color:#333}.btn-wrap.has-black-border-color>a{border-color:#333}.bb-tab.has-black-border-color .bb-label{background-color:#333}.toggle-wrap.has-black-border-color .toggle-button{background-color:#333}.toggle-wrap.has-black-border-color .toggle-button,.toggle-wrap.has-black-border-color .toggle-content{border-color:#333}.iconlist-box.has-black-icon-color li::before{color:#333}.micro-balloon.has-black-background-color{background-color:#333;border-color:transparent}.micro-balloon.has-black-background-color.micro-bottom::after{border-bottom-color:#333;border-top-color:transparent}.micro-balloon.has-black-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-black-background-color::after{border-top-color:#333}.micro-balloon.has-border-color.has-black-border-color{border-color:#333}.micro-balloon.micro-top.has-black-border-color::before{border-top-color:#333}.micro-balloon.micro-bottom.has-black-border-color::before{border-bottom-color:#333}.caption-box.has-black-border-color .box-label{background-color:#333}.tab-caption-box.has-black-border-color .box-label{background-color:#333}.tab-caption-box.has-black-border-color .box-content{border-color:#333}.tab-caption-box.has-black-background-color .box-content{background-color:#333}.label-box.has-black-border-color .box-content{border-color:#333}.label-box.has-black-background-color .box-content{background-color:#333}.sbp-l .speech-balloon.has-black-border-color::before{border-right-color:#333}.sbp-r .speech-balloon.has-black-border-color::before{border-left-color:#333}.sbp-l .speech-balloon.has-black-background-color::after{border-right-color:#333}.sbp-r .speech-balloon.has-black-background-color::after{border-left-color:#333}.sbs-line.sbp-r .speech-balloon.has-black-background-color{background-color:#333}.sbs-line.sbp-r .speech-balloon.has-black-border-color{border-color:#333}.speech-wrap.sbs-think .speech-balloon.has-black-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-black-border-color::after{border-color:#333}.sbs-think .speech-balloon.has-black-background-color::before,.sbs-think .speech-balloon.has-black-background-color::after{background-color:#333}.timeline-box.has-black-point-color .timeline-item::before{background-color:#333}.body .has-white-background-color{background-color:#fff}.body .has-white-color{color:#fff}.body .has-white-border-color{border-color:#fff}.btn-wrap.has-white-background-color>a{background-color:#fff}.btn-wrap.has-white-color>a{color:#fff}.btn-wrap.has-white-border-color>a{border-color:#fff}.bb-tab.has-white-border-color .bb-label{background-color:#fff}.toggle-wrap.has-white-border-color .toggle-button{background-color:#fff}.toggle-wrap.has-white-border-color .toggle-button,.toggle-wrap.has-white-border-color .toggle-content{border-color:#fff}.iconlist-box.has-white-icon-color li::before{color:#fff}.micro-balloon.has-white-background-color{background-color:#fff;border-color:transparent}.micro-balloon.has-white-background-color.micro-bottom::after{border-bottom-color:#fff;border-top-color:transparent}.micro-balloon.has-white-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-white-background-color::after{border-top-color:#fff}.micro-balloon.has-border-color.has-white-border-color{border-color:#fff}.micro-balloon.micro-top.has-white-border-color::before{border-top-color:#fff}.micro-balloon.micro-bottom.has-white-border-color::before{border-bottom-color:#fff}.caption-box.has-white-border-color .box-label{background-color:#fff}.tab-caption-box.has-white-border-color .box-label{background-color:#fff}.tab-caption-box.has-white-border-color .box-content{border-color:#fff}.tab-caption-box.has-white-background-color .box-content{background-color:#fff}.label-box.has-white-border-color .box-content{border-color:#fff}.label-box.has-white-background-color .box-content{background-color:#fff}.sbp-l .speech-balloon.has-white-border-color::before{border-right-color:#fff}.sbp-r .speech-balloon.has-white-border-color::before{border-left-color:#fff}.sbp-l .speech-balloon.has-white-background-color::after{border-right-color:#fff}.sbp-r .speech-balloon.has-white-background-color::after{border-left-color:#fff}.sbs-line.sbp-r .speech-balloon.has-white-background-color{background-color:#fff}.sbs-line.sbp-r .speech-balloon.has-white-border-color{border-color:#fff}.speech-wrap.sbs-think .speech-balloon.has-white-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-white-border-color::after{border-color:#fff}.sbs-think .speech-balloon.has-white-background-color::before,.sbs-think .speech-balloon.has-white-background-color::after{background-color:#fff}.timeline-box.has-white-point-color .timeline-item::before{background-color:#fff}.body .has-watery-blue-background-color{background-color:#f3fafe}.body .has-watery-blue-color{color:#f3fafe}.body .has-watery-blue-border-color{border-color:#f3fafe}.btn-wrap.has-watery-blue-background-color>a{background-color:#f3fafe}.btn-wrap.has-watery-blue-color>a{color:#f3fafe}.btn-wrap.has-watery-blue-border-color>a{border-color:#f3fafe}.bb-tab.has-watery-blue-border-color .bb-label{background-color:#f3fafe}.toggle-wrap.has-watery-blue-border-color .toggle-button{background-color:#f3fafe}.toggle-wrap.has-watery-blue-border-color .toggle-button,.toggle-wrap.has-watery-blue-border-color .toggle-content{border-color:#f3fafe}.iconlist-box.has-watery-blue-icon-color li::before{color:#f3fafe}.micro-balloon.has-watery-blue-background-color{background-color:#f3fafe;border-color:transparent}.micro-balloon.has-watery-blue-background-color.micro-bottom::after{border-bottom-color:#f3fafe;border-top-color:transparent}.micro-balloon.has-watery-blue-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-watery-blue-background-color::after{border-top-color:#f3fafe}.micro-balloon.has-border-color.has-watery-blue-border-color{border-color:#f3fafe}.micro-balloon.micro-top.has-watery-blue-border-color::before{border-top-color:#f3fafe}.micro-balloon.micro-bottom.has-watery-blue-border-color::before{border-bottom-color:#f3fafe}.caption-box.has-watery-blue-border-color .box-label{background-color:#f3fafe}.tab-caption-box.has-watery-blue-border-color .box-label{background-color:#f3fafe}.tab-caption-box.has-watery-blue-border-color .box-content{border-color:#f3fafe}.tab-caption-box.has-watery-blue-background-color .box-content{background-color:#f3fafe}.label-box.has-watery-blue-border-color .box-content{border-color:#f3fafe}.label-box.has-watery-blue-background-color .box-content{background-color:#f3fafe}.sbp-l .speech-balloon.has-watery-blue-border-color::before{border-right-color:#f3fafe}.sbp-r .speech-balloon.has-watery-blue-border-color::before{border-left-color:#f3fafe}.sbp-l .speech-balloon.has-watery-blue-background-color::after{border-right-color:#f3fafe}.sbp-r .speech-balloon.has-watery-blue-background-color::after{border-left-color:#f3fafe}.sbs-line.sbp-r .speech-balloon.has-watery-blue-background-color{background-color:#f3fafe}.sbs-line.sbp-r .speech-balloon.has-watery-blue-border-color{border-color:#f3fafe}.speech-wrap.sbs-think .speech-balloon.has-watery-blue-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-watery-blue-border-color::after{border-color:#f3fafe}.sbs-think .speech-balloon.has-watery-blue-background-color::before,.sbs-think .speech-balloon.has-watery-blue-background-color::after{background-color:#f3fafe}.timeline-box.has-watery-blue-point-color .timeline-item::before{background-color:#f3fafe}.body .has-watery-yellow-background-color{background-color:#fff7cc}.body .has-watery-yellow-color{color:#fff7cc}.body .has-watery-yellow-border-color{border-color:#fff7cc}.btn-wrap.has-watery-yellow-background-color>a{background-color:#fff7cc}.btn-wrap.has-watery-yellow-color>a{color:#fff7cc}.btn-wrap.has-watery-yellow-border-color>a{border-color:#fff7cc}.bb-tab.has-watery-yellow-border-color .bb-label{background-color:#fff7cc}.toggle-wrap.has-watery-yellow-border-color .toggle-button{background-color:#fff7cc}.toggle-wrap.has-watery-yellow-border-color .toggle-button,.toggle-wrap.has-watery-yellow-border-color .toggle-content{border-color:#fff7cc}.iconlist-box.has-watery-yellow-icon-color li::before{color:#fff7cc}.micro-balloon.has-watery-yellow-background-color{background-color:#fff7cc;border-color:transparent}.micro-balloon.has-watery-yellow-background-color.micro-bottom::after{border-bottom-color:#fff7cc;border-top-color:transparent}.micro-balloon.has-watery-yellow-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-watery-yellow-background-color::after{border-top-color:#fff7cc}.micro-balloon.has-border-color.has-watery-yellow-border-color{border-color:#fff7cc}.micro-balloon.micro-top.has-watery-yellow-border-color::before{border-top-color:#fff7cc}.micro-balloon.micro-bottom.has-watery-yellow-border-color::before{border-bottom-color:#fff7cc}.caption-box.has-watery-yellow-border-color .box-label{background-color:#fff7cc}.tab-caption-box.has-watery-yellow-border-color .box-label{background-color:#fff7cc}.tab-caption-box.has-watery-yellow-border-color .box-content{border-color:#fff7cc}.tab-caption-box.has-watery-yellow-background-color .box-content{background-color:#fff7cc}.label-box.has-watery-yellow-border-color .box-content{border-color:#fff7cc}.label-box.has-watery-yellow-background-color .box-content{background-color:#fff7cc}.sbp-l .speech-balloon.has-watery-yellow-border-color::before{border-right-color:#fff7cc}.sbp-r .speech-balloon.has-watery-yellow-border-color::before{border-left-color:#fff7cc}.sbp-l .speech-balloon.has-watery-yellow-background-color::after{border-right-color:#fff7cc}.sbp-r .speech-balloon.has-watery-yellow-background-color::after{border-left-color:#fff7cc}.sbs-line.sbp-r .speech-balloon.has-watery-yellow-background-color{background-color:#fff7cc}.sbs-line.sbp-r .speech-balloon.has-watery-yellow-border-color{border-color:#fff7cc}.speech-wrap.sbs-think .speech-balloon.has-watery-yellow-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-watery-yellow-border-color::after{border-color:#fff7cc}.sbs-think .speech-balloon.has-watery-yellow-background-color::before,.sbs-think .speech-balloon.has-watery-yellow-background-color::after{background-color:#fff7cc}.timeline-box.has-watery-yellow-point-color .timeline-item::before{background-color:#fff7cc}.body .has-watery-red-background-color{background-color:#fdf2f2}.body .has-watery-red-color{color:#fdf2f2}.body .has-watery-red-border-color{border-color:#fdf2f2}.btn-wrap.has-watery-red-background-color>a{background-color:#fdf2f2}.btn-wrap.has-watery-red-color>a{color:#fdf2f2}.btn-wrap.has-watery-red-border-color>a{border-color:#fdf2f2}.bb-tab.has-watery-red-border-color .bb-label{background-color:#fdf2f2}.toggle-wrap.has-watery-red-border-color .toggle-button{background-color:#fdf2f2}.toggle-wrap.has-watery-red-border-color .toggle-button,.toggle-wrap.has-watery-red-border-color .toggle-content{border-color:#fdf2f2}.iconlist-box.has-watery-red-icon-color li::before{color:#fdf2f2}.micro-balloon.has-watery-red-background-color{background-color:#fdf2f2;border-color:transparent}.micro-balloon.has-watery-red-background-color.micro-bottom::after{border-bottom-color:#fdf2f2;border-top-color:transparent}.micro-balloon.has-watery-red-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-watery-red-background-color::after{border-top-color:#fdf2f2}.micro-balloon.has-border-color.has-watery-red-border-color{border-color:#fdf2f2}.micro-balloon.micro-top.has-watery-red-border-color::before{border-top-color:#fdf2f2}.micro-balloon.micro-bottom.has-watery-red-border-color::before{border-bottom-color:#fdf2f2}.caption-box.has-watery-red-border-color .box-label{background-color:#fdf2f2}.tab-caption-box.has-watery-red-border-color .box-label{background-color:#fdf2f2}.tab-caption-box.has-watery-red-border-color .box-content{border-color:#fdf2f2}.tab-caption-box.has-watery-red-background-color .box-content{background-color:#fdf2f2}.label-box.has-watery-red-border-color .box-content{border-color:#fdf2f2}.label-box.has-watery-red-background-color .box-content{background-color:#fdf2f2}.sbp-l .speech-balloon.has-watery-red-border-color::before{border-right-color:#fdf2f2}.sbp-r .speech-balloon.has-watery-red-border-color::before{border-left-color:#fdf2f2}.sbp-l .speech-balloon.has-watery-red-background-color::after{border-right-color:#fdf2f2}.sbp-r .speech-balloon.has-watery-red-background-color::after{border-left-color:#fdf2f2}.sbs-line.sbp-r .speech-balloon.has-watery-red-background-color{background-color:#fdf2f2}.sbs-line.sbp-r .speech-balloon.has-watery-red-border-color{border-color:#fdf2f2}.speech-wrap.sbs-think .speech-balloon.has-watery-red-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-watery-red-border-color::after{border-color:#fdf2f2}.sbs-think .speech-balloon.has-watery-red-background-color::before,.sbs-think .speech-balloon.has-watery-red-background-color::after{background-color:#fdf2f2}.timeline-box.has-watery-red-point-color .timeline-item::before{background-color:#fdf2f2}.body .has-watery-green-background-color{background-color:#ebf8f4}.body .has-watery-green-color{color:#ebf8f4}.body .has-watery-green-border-color{border-color:#ebf8f4}.btn-wrap.has-watery-green-background-color>a{background-color:#ebf8f4}.btn-wrap.has-watery-green-color>a{color:#ebf8f4}.btn-wrap.has-watery-green-border-color>a{border-color:#ebf8f4}.bb-tab.has-watery-green-border-color .bb-label{background-color:#ebf8f4}.toggle-wrap.has-watery-green-border-color .toggle-button{background-color:#ebf8f4}.toggle-wrap.has-watery-green-border-color .toggle-button,.toggle-wrap.has-watery-green-border-color .toggle-content{border-color:#ebf8f4}.iconlist-box.has-watery-green-icon-color li::before{color:#ebf8f4}.micro-balloon.has-watery-green-background-color{background-color:#ebf8f4;border-color:transparent}.micro-balloon.has-watery-green-background-color.micro-bottom::after{border-bottom-color:#ebf8f4;border-top-color:transparent}.micro-balloon.has-watery-green-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-watery-green-background-color::after{border-top-color:#ebf8f4}.micro-balloon.has-border-color.has-watery-green-border-color{border-color:#ebf8f4}.micro-balloon.micro-top.has-watery-green-border-color::before{border-top-color:#ebf8f4}.micro-balloon.micro-bottom.has-watery-green-border-color::before{border-bottom-color:#ebf8f4}.caption-box.has-watery-green-border-color .box-label{background-color:#ebf8f4}.tab-caption-box.has-watery-green-border-color .box-label{background-color:#ebf8f4}.tab-caption-box.has-watery-green-border-color .box-content{border-color:#ebf8f4}.tab-caption-box.has-watery-green-background-color .box-content{background-color:#ebf8f4}.label-box.has-watery-green-border-color .box-content{border-color:#ebf8f4}.label-box.has-watery-green-background-color .box-content{background-color:#ebf8f4}.sbp-l .speech-balloon.has-watery-green-border-color::before{border-right-color:#ebf8f4}.sbp-r .speech-balloon.has-watery-green-border-color::before{border-left-color:#ebf8f4}.sbp-l .speech-balloon.has-watery-green-background-color::after{border-right-color:#ebf8f4}.sbp-r .speech-balloon.has-watery-green-background-color::after{border-left-color:#ebf8f4}.sbs-line.sbp-r .speech-balloon.has-watery-green-background-color{background-color:#ebf8f4}.sbs-line.sbp-r .speech-balloon.has-watery-green-border-color{border-color:#ebf8f4}.speech-wrap.sbs-think .speech-balloon.has-watery-green-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-watery-green-border-color::after{border-color:#ebf8f4}.sbs-think .speech-balloon.has-watery-green-background-color::before,.sbs-think .speech-balloon.has-watery-green-background-color::after{background-color:#ebf8f4}.timeline-box.has-watery-green-point-color .timeline-item::before{background-color:#ebf8f4}.body .has-ex-a-background-color{background-color:#fff}.body .has-ex-a-color{color:#fff}.body .has-ex-a-border-color{border-color:#fff}.btn-wrap.has-ex-a-background-color>a{background-color:#fff}.btn-wrap.has-ex-a-color>a{color:#fff}.btn-wrap.has-ex-a-border-color>a{border-color:#fff}.bb-tab.has-ex-a-border-color .bb-label{background-color:#fff}.toggle-wrap.has-ex-a-border-color .toggle-button{background-color:#fff}.toggle-wrap.has-ex-a-border-color .toggle-button,.toggle-wrap.has-ex-a-border-color .toggle-content{border-color:#fff}.iconlist-box.has-ex-a-icon-color li::before{color:#fff}.micro-balloon.has-ex-a-background-color{background-color:#fff;border-color:transparent}.micro-balloon.has-ex-a-background-color.micro-bottom::after{border-bottom-color:#fff;border-top-color:transparent}.micro-balloon.has-ex-a-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-ex-a-background-color::after{border-top-color:#fff}.micro-balloon.has-border-color.has-ex-a-border-color{border-color:#fff}.micro-balloon.micro-top.has-ex-a-border-color::before{border-top-color:#fff}.micro-balloon.micro-bottom.has-ex-a-border-color::before{border-bottom-color:#fff}.caption-box.has-ex-a-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-a-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-a-border-color .box-content{border-color:#fff}.tab-caption-box.has-ex-a-background-color .box-content{background-color:#fff}.label-box.has-ex-a-border-color .box-content{border-color:#fff}.label-box.has-ex-a-background-color .box-content{background-color:#fff}.sbp-l .speech-balloon.has-ex-a-border-color::before{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-a-border-color::before{border-left-color:#fff}.sbp-l .speech-balloon.has-ex-a-background-color::after{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-a-background-color::after{border-left-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-a-background-color{background-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-a-border-color{border-color:#fff}.speech-wrap.sbs-think .speech-balloon.has-ex-a-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-ex-a-border-color::after{border-color:#fff}.sbs-think .speech-balloon.has-ex-a-background-color::before,.sbs-think .speech-balloon.has-ex-a-background-color::after{background-color:#fff}.timeline-box.has-ex-a-point-color .timeline-item::before{background-color:#fff}.body .has-ex-b-background-color{background-color:#fff}.body .has-ex-b-color{color:#fff}.body .has-ex-b-border-color{border-color:#fff}.btn-wrap.has-ex-b-background-color>a{background-color:#fff}.btn-wrap.has-ex-b-color>a{color:#fff}.btn-wrap.has-ex-b-border-color>a{border-color:#fff}.bb-tab.has-ex-b-border-color .bb-label{background-color:#fff}.toggle-wrap.has-ex-b-border-color .toggle-button{background-color:#fff}.toggle-wrap.has-ex-b-border-color .toggle-button,.toggle-wrap.has-ex-b-border-color .toggle-content{border-color:#fff}.iconlist-box.has-ex-b-icon-color li::before{color:#fff}.micro-balloon.has-ex-b-background-color{background-color:#fff;border-color:transparent}.micro-balloon.has-ex-b-background-color.micro-bottom::after{border-bottom-color:#fff;border-top-color:transparent}.micro-balloon.has-ex-b-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-ex-b-background-color::after{border-top-color:#fff}.micro-balloon.has-border-color.has-ex-b-border-color{border-color:#fff}.micro-balloon.micro-top.has-ex-b-border-color::before{border-top-color:#fff}.micro-balloon.micro-bottom.has-ex-b-border-color::before{border-bottom-color:#fff}.caption-box.has-ex-b-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-b-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-b-border-color .box-content{border-color:#fff}.tab-caption-box.has-ex-b-background-color .box-content{background-color:#fff}.label-box.has-ex-b-border-color .box-content{border-color:#fff}.label-box.has-ex-b-background-color .box-content{background-color:#fff}.sbp-l .speech-balloon.has-ex-b-border-color::before{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-b-border-color::before{border-left-color:#fff}.sbp-l .speech-balloon.has-ex-b-background-color::after{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-b-background-color::after{border-left-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-b-background-color{background-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-b-border-color{border-color:#fff}.speech-wrap.sbs-think .speech-balloon.has-ex-b-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-ex-b-border-color::after{border-color:#fff}.sbs-think .speech-balloon.has-ex-b-background-color::before,.sbs-think .speech-balloon.has-ex-b-background-color::after{background-color:#fff}.timeline-box.has-ex-b-point-color .timeline-item::before{background-color:#fff}.body .has-ex-c-background-color{background-color:#fff}.body .has-ex-c-color{color:#fff}.body .has-ex-c-border-color{border-color:#fff}.btn-wrap.has-ex-c-background-color>a{background-color:#fff}.btn-wrap.has-ex-c-color>a{color:#fff}.btn-wrap.has-ex-c-border-color>a{border-color:#fff}.bb-tab.has-ex-c-border-color .bb-label{background-color:#fff}.toggle-wrap.has-ex-c-border-color .toggle-button{background-color:#fff}.toggle-wrap.has-ex-c-border-color .toggle-button,.toggle-wrap.has-ex-c-border-color .toggle-content{border-color:#fff}.iconlist-box.has-ex-c-icon-color li::before{color:#fff}.micro-balloon.has-ex-c-background-color{background-color:#fff;border-color:transparent}.micro-balloon.has-ex-c-background-color.micro-bottom::after{border-bottom-color:#fff;border-top-color:transparent}.micro-balloon.has-ex-c-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-ex-c-background-color::after{border-top-color:#fff}.micro-balloon.has-border-color.has-ex-c-border-color{border-color:#fff}.micro-balloon.micro-top.has-ex-c-border-color::before{border-top-color:#fff}.micro-balloon.micro-bottom.has-ex-c-border-color::before{border-bottom-color:#fff}.caption-box.has-ex-c-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-c-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-c-border-color .box-content{border-color:#fff}.tab-caption-box.has-ex-c-background-color .box-content{background-color:#fff}.label-box.has-ex-c-border-color .box-content{border-color:#fff}.label-box.has-ex-c-background-color .box-content{background-color:#fff}.sbp-l .speech-balloon.has-ex-c-border-color::before{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-c-border-color::before{border-left-color:#fff}.sbp-l .speech-balloon.has-ex-c-background-color::after{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-c-background-color::after{border-left-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-c-background-color{background-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-c-border-color{border-color:#fff}.speech-wrap.sbs-think .speech-balloon.has-ex-c-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-ex-c-border-color::after{border-color:#fff}.sbs-think .speech-balloon.has-ex-c-background-color::before,.sbs-think .speech-balloon.has-ex-c-background-color::after{background-color:#fff}.timeline-box.has-ex-c-point-color .timeline-item::before{background-color:#fff}.body .has-ex-d-background-color{background-color:#fff}.body .has-ex-d-color{color:#fff}.body .has-ex-d-border-color{border-color:#fff}.btn-wrap.has-ex-d-background-color>a{background-color:#fff}.btn-wrap.has-ex-d-color>a{color:#fff}.btn-wrap.has-ex-d-border-color>a{border-color:#fff}.bb-tab.has-ex-d-border-color .bb-label{background-color:#fff}.toggle-wrap.has-ex-d-border-color .toggle-button{background-color:#fff}.toggle-wrap.has-ex-d-border-color .toggle-button,.toggle-wrap.has-ex-d-border-color .toggle-content{border-color:#fff}.iconlist-box.has-ex-d-icon-color li::before{color:#fff}.micro-balloon.has-ex-d-background-color{background-color:#fff;border-color:transparent}.micro-balloon.has-ex-d-background-color.micro-bottom::after{border-bottom-color:#fff;border-top-color:transparent}.micro-balloon.has-ex-d-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-ex-d-background-color::after{border-top-color:#fff}.micro-balloon.has-border-color.has-ex-d-border-color{border-color:#fff}.micro-balloon.micro-top.has-ex-d-border-color::before{border-top-color:#fff}.micro-balloon.micro-bottom.has-ex-d-border-color::before{border-bottom-color:#fff}.caption-box.has-ex-d-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-d-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-d-border-color .box-content{border-color:#fff}.tab-caption-box.has-ex-d-background-color .box-content{background-color:#fff}.label-box.has-ex-d-border-color .box-content{border-color:#fff}.label-box.has-ex-d-background-color .box-content{background-color:#fff}.sbp-l .speech-balloon.has-ex-d-border-color::before{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-d-border-color::before{border-left-color:#fff}.sbp-l .speech-balloon.has-ex-d-background-color::after{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-d-background-color::after{border-left-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-d-background-color{background-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-d-border-color{border-color:#fff}.speech-wrap.sbs-think .speech-balloon.has-ex-d-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-ex-d-border-color::after{border-color:#fff}.sbs-think .speech-balloon.has-ex-d-background-color::before,.sbs-think .speech-balloon.has-ex-d-background-color::after{background-color:#fff}.timeline-box.has-ex-d-point-color .timeline-item::before{background-color:#fff}.body .has-ex-e-background-color{background-color:#fff}.body .has-ex-e-color{color:#fff}.body .has-ex-e-border-color{border-color:#fff}.btn-wrap.has-ex-e-background-color>a{background-color:#fff}.btn-wrap.has-ex-e-color>a{color:#fff}.btn-wrap.has-ex-e-border-color>a{border-color:#fff}.bb-tab.has-ex-e-border-color .bb-label{background-color:#fff}.toggle-wrap.has-ex-e-border-color .toggle-button{background-color:#fff}.toggle-wrap.has-ex-e-border-color .toggle-button,.toggle-wrap.has-ex-e-border-color .toggle-content{border-color:#fff}.iconlist-box.has-ex-e-icon-color li::before{color:#fff}.micro-balloon.has-ex-e-background-color{background-color:#fff;border-color:transparent}.micro-balloon.has-ex-e-background-color.micro-bottom::after{border-bottom-color:#fff;border-top-color:transparent}.micro-balloon.has-ex-e-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-ex-e-background-color::after{border-top-color:#fff}.micro-balloon.has-border-color.has-ex-e-border-color{border-color:#fff}.micro-balloon.micro-top.has-ex-e-border-color::before{border-top-color:#fff}.micro-balloon.micro-bottom.has-ex-e-border-color::before{border-bottom-color:#fff}.caption-box.has-ex-e-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-e-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-e-border-color .box-content{border-color:#fff}.tab-caption-box.has-ex-e-background-color .box-content{background-color:#fff}.label-box.has-ex-e-border-color .box-content{border-color:#fff}.label-box.has-ex-e-background-color .box-content{background-color:#fff}.sbp-l .speech-balloon.has-ex-e-border-color::before{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-e-border-color::before{border-left-color:#fff}.sbp-l .speech-balloon.has-ex-e-background-color::after{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-e-background-color::after{border-left-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-e-background-color{background-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-e-border-color{border-color:#fff}.speech-wrap.sbs-think .speech-balloon.has-ex-e-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-ex-e-border-color::after{border-color:#fff}.sbs-think .speech-balloon.has-ex-e-background-color::before,.sbs-think .speech-balloon.has-ex-e-background-color::after{background-color:#fff}.timeline-box.has-ex-e-point-color .timeline-item::before{background-color:#fff}.body .has-ex-f-background-color{background-color:#fff}.body .has-ex-f-color{color:#fff}.body .has-ex-f-border-color{border-color:#fff}.btn-wrap.has-ex-f-background-color>a{background-color:#fff}.btn-wrap.has-ex-f-color>a{color:#fff}.btn-wrap.has-ex-f-border-color>a{border-color:#fff}.bb-tab.has-ex-f-border-color .bb-label{background-color:#fff}.toggle-wrap.has-ex-f-border-color .toggle-button{background-color:#fff}.toggle-wrap.has-ex-f-border-color .toggle-button,.toggle-wrap.has-ex-f-border-color .toggle-content{border-color:#fff}.iconlist-box.has-ex-f-icon-color li::before{color:#fff}.micro-balloon.has-ex-f-background-color{background-color:#fff;border-color:transparent}.micro-balloon.has-ex-f-background-color.micro-bottom::after{border-bottom-color:#fff;border-top-color:transparent}.micro-balloon.has-ex-f-background-color::before{border-top-color:transparent;border-bottom-color:transparent}.micro-balloon.has-ex-f-background-color::after{border-top-color:#fff}.micro-balloon.has-border-color.has-ex-f-border-color{border-color:#fff}.micro-balloon.micro-top.has-ex-f-border-color::before{border-top-color:#fff}.micro-balloon.micro-bottom.has-ex-f-border-color::before{border-bottom-color:#fff}.caption-box.has-ex-f-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-f-border-color .box-label{background-color:#fff}.tab-caption-box.has-ex-f-border-color .box-content{border-color:#fff}.tab-caption-box.has-ex-f-background-color .box-content{background-color:#fff}.label-box.has-ex-f-border-color .box-content{border-color:#fff}.label-box.has-ex-f-background-color .box-content{background-color:#fff}.sbp-l .speech-balloon.has-ex-f-border-color::before{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-f-border-color::before{border-left-color:#fff}.sbp-l .speech-balloon.has-ex-f-background-color::after{border-right-color:#fff}.sbp-r .speech-balloon.has-ex-f-background-color::after{border-left-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-f-background-color{background-color:#fff}.sbs-line.sbp-r .speech-balloon.has-ex-f-border-color{border-color:#fff}.speech-wrap.sbs-think .speech-balloon.has-ex-f-border-color::before,.speech-wrap.sbs-think .speech-balloon.has-ex-f-border-color::after{border-color:#fff}.sbs-think .speech-balloon.has-ex-f-background-color::before,.sbs-think .speech-balloon.has-ex-f-background-color::after{background-color:#fff}.timeline-box.has-ex-f-point-color .timeline-item::before{background-color:#fff}.body .btn-wrap{background-color:transparent;color:#333;border-color:transparent;font-size:16px}.toggle-wrap.has-border-color .toggle-button{color:#fff}.btn-wrap.has-small-font-size>a{font-size:13px}.btn-wrap.has-medium-font-size>a{font-size:20px}.btn-wrap.has-large-font-size>a{font-size:36px}.btn-wrap.has-huge-font-size>a,.btn-wrap.has-larger-font-size>a{font-size:42px}.box-menu:hover{box-shadow:inset 2px 2px 0 0 #f6a068,2px 2px 0 0 #f6a068,2px 0 0 0 #f6a068,0 2px 0 0 #f6a068}.box-menu-icon{color:#f6a068}</style>
+<link rel="stylesheet" id="cocoon-child-style-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-child-master/style.css?ver=5.5.7&#038;fver=20200818021954" media="all">
+<link rel="stylesheet" id="cocoon-child-keyframes-css" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-child-master/keyframes.css?ver=5.5.7&#038;fver=20190803111808" media="all">
+<link rel="stylesheet" id="wp-block-library-css" href="https://blog.so-ta.net/wp/wp-includes/css/dist/block-library/style.min.css?ver=5.5.7&#038;fver=20200901072233" media="all">
+<style id="style-inline-css">@charset "UTF-8";
+
+/*!
+Theme Name: Cocoon Child
+Template:   cocoon-master
+Version:    1.0.8
+*/
+
+/************************************
+** 子テーマ用のスタイルを書く
+************************************/
+/*必要ならばここにコードを書く*/
+/*　コードのfontを変更　*/
+/* code  {
+    font-family: "CourierNew", "Consolas", "Courier", monospace;
+} */
+
+/************************************
+** レスポンシブデザイン用のメディアクエリ
+************************************/
+/*1240px以下*/
+@media screen and (max-width: 1240px){
+  /*必要ならばここにコードを書く*/
+}
+
+/*1030px以下*/
+@media screen and (max-width: 1030px){
+  /*必要ならばここにコードを書く*/
+}
+
+/*768px以下*/
+@media screen and (max-width: 768px){
+  /*必要ならばここにコードを書く*/
+}
+
+/*480px以下*/
+@media screen and (max-width: 480px){
+  /*必要ならばここにコードを書く*/
+}
+/* .entry-content pre {
+  border: none;
+  padding: 0;
+  position: relative;
+} */
+/* .entry-content pre code {
+  display: block;
+  padding: 0.5em 1em 0.5em 3em;
+} */
+/* .entry-content pre code::before {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  white-space: pre;
+  display: block;
+  padding: 0.5em 0em 0.5em 0em;
+  width: 3em;
+  box-sizing: border-box;
+  color: #777;
+  text-align: center;
+  content: "1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 10\A 11\A 12\A 13\A 14\A 15\A 16\A 17\A 18\A 19\A 20\A 21\A 22\A 23\A 24\A 25\A 26\A 27\A 28\A 29\A 30\A 31\A 32\A 33\A 34\A 35\A 36\A 37\A 38\A 39\A 40\A 41\A 42\A 43\A 44\A 45\A 46\A 47\A 48\A 49\A 50\A 51\A 52\A 53\A 54\A 55\A 56\A 57\A 58\A 59\A 60\A 61\A 62\A 63\A 64\A 65\A 66\A 67\A 68\A 69\A 70\A 71\A 72\A 73\A 74\A 75\A 76\A 77\A 78\A 79\A 80\A 81\A 82\A 83\A 84\A 85\A 86\A 87\A 88\A 89\A 90\A 91\A 92\A 93\A 94\A 95\A 96\A 97\A 98\A 99\A 100\A";
+} */</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js?ver=1.12.4" id="jquery-core-js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.4.1/jquery-migrate.min.js?ver=1.4.1" id="jquery-migrate-js"></script>
+<link rel="shortlink" href="https://blog.so-ta.net/?p=582">
+<!-- Cocoon canonical -->
+<link rel="canonical" href="https://blog.so-ta.net/xenontext/electron-redux-devtools/">
+<!-- Cocoon meta description -->
+<meta name="description" content="はじめにelectron と Reduxを使ってエディタを作成しているんですが, やっぱり動的にReduxを操作したいってことでRedux DevTools Extensionを使用することにしました. ついでにReactのDevTools">
+<!-- Cocoon meta keywords -->
+<meta name="keywords" content="XenonText">
+<!-- Cocoon meta thumbnail -->
+<meta name="thumbnail" content="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools.png">
+<!-- Cocoon JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "mainEntityOfPage":{
+    "@type":"WebPage",
+    "@id":"https://blog.so-ta.net/xenontext/electron-redux-devtools/"
+  },
+  "headline": "electronでRedux DevToolsを使う!",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools.png",
+    "width": 1600,
+    "height": 900
+  },
+  "datePublished": "2020-08-19T22:07:58+09:00",
+  "dateModified": "2020-08-19T22:07:58+09:00",
+  "author": {
+    "@type": "Person",
+    "name": "渡辺爽太"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "そーたの技術ブログ",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/images/no-amp-logo.png",
+      "width": 206,
+      "height": 60
+    }
+  },
+  "description": "はじめにelectron と Reduxを使ってエディタを作成しているんですが, やっぱり動的にReduxを操作したいってことでRedux DevTools Extensionを使用することにしました. ついでにReactのDevTools…"
+}
+</script>
+<link rel="icon" href="https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png" sizes="32x32">
+<link rel="icon" href="https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-192x192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-180x180.png">
+<meta name="msapplication-TileImage" content="https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-270x270.png">
+		<style id="wp-custom-css">.post .author-info {
+    display: none;
+}
+
+.article h2 {
+color: #ffffff;/*文字色*/
+background: #222222; /*背景色*/
+padding: 0.5em 0.75em;/*文字周りの余白*/
+border-radius: 0.3em;/*角の丸み*/
+line-height: 1.4;/*行間*/
+letter-spacing: 0.2em;/*文字間*/
+}
+.article h2:before {
+	content:none;
+}
+
+.article h4{
+	font-size: 20px
+}
+
+.author-box .sns-follow-buttons a.follow-button {
+    font-size: 35px;
+}
+
+.eye-catch img{
+  object-fit: cover;
+}
+
+pre {
+    background-color: #f3f4f5;
+    border: 1px solid #ccc;
+    overflow: auto;
+    padding: 0px;
+    margin: 1em 0;
+}
+.author-description, .author-description a{
+    color:black;
+    font-size:.9em;
+    font-weight:100;
+}
+
+h2.entry-card-title.card-title.e-card-title {
+    font-weight: 200;
+    color: black;
+    padding: 20px 0 20px 0;
+}</style>
+		
+<!-- Preload -->
+<link rel="preload" as="font" type="font/woff" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/webfonts/icomoon/fonts/icomoon.woff?3o5bkh" crossorigin>
+<link rel="preload" as="font" type="font/ttf" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/webfonts/icomoon/fonts/icomoon.ttf?3o5bkh" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/webfonts/fontawesome5/webfonts/fa-brands-400.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/webfonts/fontawesome5/webfonts/fa-regular-400.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/webfonts/fontawesome5/webfonts/fa-solid-900.woff2" crossorigin>
+
+
+
+<!-- PWA -->
+<link rel="manifest" href="https://blog.so-ta.net/cocoon-manifest.json">
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', function() {
+				navigator.serviceWorker.register('https://blog.so-ta.net/cocoon-service-worker.js').then(function(registration) {
+					// Registration was successful
+					console.log('ServiceWorker registration successful with scope: ', registration.scope);
+					registration.onupdatefound = function() {
+						registration.update();
+						console.log('ServiceWorker update successful');
+					}
+				}, function(err) {
+					// registration failed
+					console.log('ServiceWorker registration failed: ', err);
+				});
+			});
+		}
+	}, false);
+</script>
+<!-- manifest.jsonのtheme_colorと同じ色を指定します -->
+<meta name="theme-color" content="#19448e">
+
+<!-- 以下はiOS用のコードです -->
+<!-- ホーム画面に表示されるアプリ名 -->
+<meta name="apple-mobile-web-app-title" content="そーたのブログ">
+<!-- URLバーの非表示 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<!-- ステータスバーのスタイル（default / black / black-translucent） -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<!-- アイコンの指定 -->
+<link rel="apple-touch-icon-precomposed" href="https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3.png" sizes="512x512">
+<!-- /PWA -->
+
+
+	
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B1GZFLHBTY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B1GZFLHBTY');
+</script>
+</head>
+
+<body class="post-template-default single single-post postid-582 single-format-standard body public-page page-body categoryid-14 tagid-15 tagid-17 ff-yu-gothic fz-18px fw-400 hlt-center-logo-wrap ect-entry-card-wrap rect-entry-card-wrap no-scrollable-sidebar no-scrollable-main sidebar-right mblt-footer-mobile-buttons scrollable-mobile-buttons author-admin mobile-button-fmb no-mobile-sidebar no-sp-snippet " itemscope itemtype="https://schema.org/WebPage" data-barba="wrapper">
+
+
+
+<div id="container" class="container cf" data-barba="container" data-barba-namespace="singular">
+
+  
+  
+
+  
+<div id="header-container" class="header-container">
+  <div id="header-container-in" class="header-container-in hlt-center-logo">
+    <header id="header" class="header cf" itemscope itemtype="https://schema.org/WPHeader">
+
+      <div id="header-in" class="header-in wrap cf" itemscope itemtype="https://schema.org/WebSite">
+
+        
+<div class="tagline" itemprop="alternativeHeadline">ハマったことをまとめる</div>
+
+        
+        <div class="logo logo-header logo-text"><a href="https://blog.so-ta.net/" class="site-name site-name-text-link" itemprop="url"><span class="site-name-text" itemprop="name about">そーたの技術ブログ</span></a></div>
+        
+        
+      </div>
+
+    </header>
+
+    <!-- Navigation -->
+<nav id="navi" class="navi cf" itemscope itemtype="https://schema.org/SiteNavigationElement">
+  <div id="navi-in" class="navi-in wrap cf">
+          </div>
+<!-- /#navi-in -->
+</nav>
+<!-- /Navigation -->
+  </div>
+<!-- /.header-container-in -->
+</div>
+<!-- /.header-container -->
+
+  
+  
+
+  
+
+
+  
+  
+  <div id="breadcrumb" class="breadcrumb breadcrumb-category sbp-main-before wrap" itemscope itemtype="https://schema.org/BreadcrumbList">
+<div class="breadcrumb-home" itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement">
+<span class="fa fa-home fa-fw" aria-hidden="true"></span><a href="https://blog.so-ta.net/" itemprop="item"><span itemprop="name" class="breadcrumb-caption">ホーム</span></a><meta itemprop="position" content="1">
+<span class="sp"><span class="fa fa-angle-right" aria-hidden="true"></span></span>
+</div>
+<div class="breadcrumb-item" itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement">
+<span class="fa fa-folder fa-fw" aria-hidden="true"></span><a href="https://blog.so-ta.net/category/xenontext/" itemprop="item"><span itemprop="name" class="breadcrumb-caption">XenonText</span></a><meta itemprop="position" content="2">
+</div>
+</div>
+<!-- /#breadcrumb -->
+  
+  
+  <div id="content" class="content cf">
+
+    <div id="content-in" class="content-in wrap">
+
+        <main id="main" class="main" itemscope itemtype="https://schema.org/Blog">
+
+
+
+<article id="post-582" class="article post-582 post type-post status-publish format-standard has-post-thumbnail hentry category-xenontext-post tag-react-js-post tag-redux-post" itemscope="itemscope" itemprop="blogPost" itemtype="https://schema.org/BlogPosting">
+  
+      <div class="ad-area no-icon ad-above-title ad-horizontal ad-label-invisible cf" itemscope itemtype="https://schema.org/WPAdBlock">
+  <div class="ad-label" itemprop="name" data-nosnippet></div>
+  <div class="ad-wrap">
+    <div class="ad-responsive ad-usual">
+<!-- レスポンシブコード -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6714287536670840" data-ad-slot="9270363470" data-ad-format="horizontal"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+          </div>
+
+</div>
+
+      
+      
+      
+<div class="entry-categories-tags ctdt-one-row">
+  <div class="entry-categories"><a class="cat-link cat-link-14" href="https://blog.so-ta.net/category/xenontext/"><span class="fa fa-folder" aria-hidden="true"></span> XenonText</a></div>
+    <div class="entry-tags">
+<a class="tag-link tag-link-15 border-element" href="https://blog.so-ta.net/tag/react-js/"><span class="fa fa-tag" aria-hidden="true"></span> React.js</a><a class="tag-link tag-link-17 border-element" href="https://blog.so-ta.net/tag/redux/"><span class="fa fa-tag" aria-hidden="true"></span> redux</a>
+</div>
+  </div>
+
+      <header class="article-header entry-header">
+        <h1 class="entry-title" itemprop="headline">
+          electronでRedux DevToolsを使う!        </h1>
+
+        
+        
+        
+        
+        <div class="eye-catch-wrap">
+<figure class="eye-catch" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+  <img width="1600" height="900" src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools.png" class="attachment-1600x900 size-1600x900 eye-catch-image wp-post-image" alt="" loading="lazy" srcset="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools.png 1600w, https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools-500x281.png 500w, https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools-800x450.png 800w, https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools-768x432.png 768w, https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools-1536x864.png 1536w, https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools-120x68.png 120w, https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools-160x90.png 160w, https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools-320x180.png 320w" sizes="(max-width: 1600px) 100vw, 1600px">  <meta itemprop="url" content="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/electron-redux-devTools.png">
+  <meta itemprop="width" content="1600">
+  <meta itemprop="height" content="900">
+  </figure>
+</div>
+
+        
+
+        <div class="date-tags">
+  <span class="post-date"><span class="fa fa-clock-o" aria-hidden="true"></span> <time class="entry-date date published updated" datetime="2020-08-19T22:07:58+09:00" itemprop="datePublished dateModified">2020.08.19</time></span>
+  </div>
+
+        
+        
+         
+        
+        
+      </header>
+
+      
+      <div class="entry-content cf" itemprop="mainEntityOfPage">
+      
+  <div id="toc" class="toc tnt-number toc-center border-element">
+<input type="checkbox" class="toc-checkbox" id="toc-checkbox-1" checked><label class="toc-title" for="toc-checkbox-1">目次</label>
+    <div class="toc-content">
+    <ol class="toc-list open">
+<li><a href="#toc1" tabindex="0">はじめに</a></li>
+<li><a href="#toc2" tabindex="0">前提</a></li>
+<li>
+<a href="#toc3" tabindex="0">手順</a><ol><li><a href="#toc4" tabindex="0">とらゼミの場合</a></li></ol>
+</li>
+<li><a href="#toc5" tabindex="0">結果</a></li>
+<li><a href="#toc6" tabindex="0">おわりに</a></li>
+</ol>
+    </div>
+  </div>
+
+<h2><span id="toc1">はじめに</span></h2>
+<p>electron と Reduxを使ってエディタを作成しているんですが,<br>
+やっぱり動的にReduxを操作したいってことでRedux DevTools Extension<br>
+を使用することにしました. ついでにReactのDevToolsも入れます.<br>
+electronを使った場合が日本語であまりなかったので紹介します.</p>
+<h2><span id="toc2">前提</span></h2>
+<p>electron, Reduxを使っている前提とします(当然ですが)</p>
+<h2><span id="toc3">手順</span></h2>
+<p>まず, <a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://github.com/MarshallOfSound/electron-devtools-installer">electron-devtools-installer<span class="fa fa-external-link external-icon anchor-icon"></span></a>を入れましょう.</p>
+<pre><code class="language-bash line-numbers">npm install electron-devtools-installer --save-dev
+</code></pre>
+<p>or</p>
+<pre><code class="language-bash line-numbers">yarn add electron-devtools-installer -D
+</code></pre>
+<p>次にメインプロセスの部分に以下のように追加します.</p>
+<pre><code class="language-javascript line-numbers">//index.js
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} from 'electron-devtools-installer';
+
+...
+...
+...
+//electronを起動時にDevToolsを開く(これ便利だからおすすめ)
+win.webContents.openDevTools();
+
+installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+.then((name) =&gt; console.log(name))
+.catch((err) =&gt; console.log(err));
+</code></pre>
+<p>これで以下のようにReduxとReactのDevToolsが入りました!</p>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/redux_tab.png" alt=""></p>
+<p>しかしReduxの方をみてみるとなんか言われています&#8230;<br>
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/no_store.png" alt=""><br>
+「ストアがみつかんないよ!!」</p>
+<p>というわけでストアを接続してあげましょう.</p>
+<p>ストアを作成しているところをみてください.<br>
+一般にcreateStore関数があるところです.</p>
+<pre><code class="language-javascript line-numbers"> const store = createStore(
+   reducer,
+   // 以下を追加
+   window.__REDUX_DEVTOOLS_EXTENSION__&amp;&amp; window.__REDUX_DEVTOOLS_EXTENSION__()
+ );
+</code></pre>
+<p>window〜を追加してください. これでストアを接続できました.</p>
+<h3><span id="toc4">とらゼミの場合</span></h3>
+<p>この節はトラハックのエンジニア学習ゼミ【とらゼミ】の<a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://www.youtube.com/watch?v=FBMA34gUsgw&amp;list=PLX8Rsrpnn3IWavNOj3n4Vypzwb3q1RXhr">日本一わかりやすいReact-Redux入門<br>
+<span class="fa fa-external-link external-icon anchor-icon"></span></a>で勉強した方向けになります. 対象でない方はスキップしてください. m(_ _)m</p>
+<p>とらゼミではreduxのcreateStoreをreduxCreateStoreという名前でimportしていました.</p>
+<pre><code class="language-javascript line-numbers">//store.js
+import { combineReducers, createStore as reduxCreateStore } from 'redux';
+import EditorReducer from '../editor/reducers';
+
+export default function createStore() {
+  return reduxCreateStore(
+    combineReducers({
+      editor: EditorReducer,
+    }),
+      // 以下に追加
+    window.__REDUX_DEVTOOLS_EXTENSION__ &amp;&amp;
+      window.__REDUX_DEVTOOLS_EXTENSION__(),
+  );
+}
+
+</code></pre>
+<p>これはなぜかというと他の場所(index.jsx)でcreateStore関数をつかってストアを作成したかったからです.<br>
+よってwindow〜を追加する場所は上記のようにstore.jsの中になります.</p>
+<h2><span id="toc5">結果</span></h2>
+<p>以下のようになったら完了です.<br>
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/スクリーンショット-2020-08-19-0.35.43.png" alt=""></p>
+<h2><span id="toc6">おわりに</span></h2>
+<p>Let&#8217;s Redux!!</p>
+      </div>
+
+      
+      
+      <footer class="article-footer entry-footer">
+
+        
+        
+        
+        
+        <div class="ad-area no-icon ad-content-bottom ad-rectangle ad-label-visible cf" itemscope itemtype="https://schema.org/WPAdBlock">
+  <div class="ad-label" itemprop="name" data-nosnippet></div>
+  <div class="ad-wrap">
+    <div class="ad-responsive ad-usual">
+<!-- レスポンシブコード -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6714287536670840" data-ad-slot="9270363470" data-ad-format="rectangle"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+          </div>
+
+</div>
+
+        
+        
+        
+        
+        
+        
+        
+        
+        <div class="footer-meta">
+  <div class="author-info">
+    <span class="fa fa-pencil" aria-hidden="true"></span> <a href="https://blog.so-ta.net/author/so-ta/" class="author-link">
+      <span class="post-author vcard author" itemprop="editor author creator copyrightHolder" itemscope itemtype="https://schema.org/Person">
+        <span class="author-name fn" itemprop="name">渡辺爽太</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+        <!-- publisher設定 -->
+                <div class="publisher" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+            <div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
+              <img src="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/images/no-amp-logo.png" width="206" height="60" alt="">
+              <meta itemprop="url" content="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/images/no-amp-logo.png">
+              <meta itemprop="width" content="206">
+              <meta itemprop="height" content="60">
+            </div>
+            <div itemprop="name">そーたの技術ブログ</div>
+        </div>
+      </footer>
+
+    </article>
+
+
+<div class="under-entry-content">
+
+  
+  <aside id="related-entries" class="related-entries rect-entry-card">
+  <h2 class="related-entry-heading">
+    <span class="related-entry-main-heading main-caption">
+      関連記事    </span>
+      </h2>
+  <div class="related-list">
+                 <a href="https://blog.so-ta.net/react-js/react-ace-selectedtext/" class="related-entry-card-wrap a-wrap border-element cf" title="react-aceでselectedTextを取得する">
+<article class="related-entry-card e-card cf">
+
+  <figure class="related-entry-card-thumb card-thumb e-card-thumb">
+        <img width="160" height="90" src="https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText-160x90.png" class="related-entry-card-thumb-image card-thumb-image wp-post-image" alt="" loading="lazy" srcset="https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText-160x90.png 160w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText-500x281.png 500w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText-800x450.png 800w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText-768x432.png 768w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText-1536x864.png 1536w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText-120x68.png 120w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText-320x180.png 320w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/react-ace-selectedText.png 1600w" sizes="(max-width: 160px) 100vw, 160px">        <span class="cat-label cat-label-13">React.js</span>  </figure><!-- /.related-entry-thumb -->
+
+  <div class="related-entry-card-content card-content e-card-content">
+    <h3 class="related-entry-card-title card-title e-card-title">
+      react-aceでselectedTextを取得する    </h3>
+        <div class="related-entry-card-snippet card-snippet e-card-snippet">
+      はじめに
+現在チームでプログラミングエディタを作成しています.
+react-aceを利用してエディタ部分を作っているのですがreact.jsなんも知らない初心者なので公式ドキュメント見ても詰まりました...
+そのメモとして記しておきます.
+...    </div>
+        <div class="related-entry-card-meta card-meta e-card-meta">
+      <div class="related-entry-card-info e-card-info">
+                              </div>
+    </div>
+
+  </div>
+<!-- /.related-entry-card-content -->
+
+
+
+</article><!-- /.related-entry-card -->
+</a><!-- /.related-entry-card-wrap -->
+    
+      </div>
+</aside>
+
+  <div class="ad-area no-icon ad-below-related-posts ad-rectangle ad-label-visible cf" itemscope itemtype="https://schema.org/WPAdBlock">
+  <div class="ad-label" itemprop="name" data-nosnippet></div>
+  <div class="ad-wrap">
+    <div class="ad-responsive ad-usual">
+<!-- レスポンシブコード -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6714287536670840" data-ad-slot="9270363470" data-ad-format="rectangle"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+          </div>
+
+</div>
+
+  
+  <div id="pager-post-navi" class="pager-post-navi post-navi-default cf">
+<a href="https://blog.so-ta.net/missing-memo/gatsby-tutorial-3-error/" title="gatsbyのチュートリアル3ができない" class="prev-post a-wrap border-element cf">
+        <div class="fa fa-chevron-left iconfont" aria-hidden="true"></div>
+        <figure class="prev-post-thumb card-thumb"><img width="120" height="68" src="https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error-120x68.png" class="attachment-thumb120 size-thumb120 wp-post-image" alt="" loading="lazy" srcset="https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error-120x68.png 120w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error-500x281.png 500w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error-800x450.png 800w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error-768x432.png 768w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error-1536x864.png 1536w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error-160x90.png 160w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error-320x180.png 320w, https://blog.so-ta.net/wp/wp-content/uploads/2020/07/gatsby-turotial3-error.png 1600w" sizes="(max-width: 120px) 100vw, 120px"></figure>
+        <div class="prev-post-title">gatsbyのチュートリアル3ができない</div></a><a href="https://blog.so-ta.net/portfolio/react-github-pages-actions/" title="Reactアプリをgithub Pages, Actionsでデプロイ" class="next-post a-wrap cf">
+        <div class="fa fa-chevron-right iconfont" aria-hidden="true"></div>
+        <figure class="next-post-thumb card-thumb">
+        <img width="120" height="68" src="https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions-120x68.png" class="attachment-thumb120 size-thumb120 wp-post-image" alt="" loading="lazy" srcset="https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions-120x68.png 120w, https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions-500x281.png 500w, https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions-800x450.png 800w, https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions-768x432.png 768w, https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions-1536x864.png 1536w, https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions-160x90.png 160w, https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions-320x180.png 320w, https://blog.so-ta.net/wp/wp-content/uploads/2020/09/react-pages-actions.png 1600w" sizes="(max-width: 120px) 100vw, 120px"></figure>
+<div class="next-post-title">Reactアプリをgithub Pages, Actionsでデプロイ</div></a>
+</div>
+<!-- /.pager-post-navi -->
+
+  <!-- comment area -->
+<div id="comment-area" class="comment-area">
+  <section class="comment-list">
+    <h2 id="comments" class="comment-title">
+      コメント          </h2>
+
+      </section>
+  <aside class="comment-form">        <button id="comment-reply-btn" class="comment-btn key-btn">コメントを書き込む</button>
+      	<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">コメントをどうぞ <small><a rel="nofollow" id="cancel-comment-reply-link" href="https://blog.so-ta.net/xenontext/electron-redux-devtools/#respond" style="display:none;">コメントをキャンセル</a></small>
+</h3>
+<form action="https://blog.so-ta.net/wp/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+<p class="comment-notes"><span id="email-notes">メールアドレスが公開されることはありません。</span> <span class="required">*</span> が付いている欄は必須項目です</p>
+<p class="comment-form-comment"><label for="comment">コメント</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required="required"></textarea></p>
+<p class="comment-form-author"><label for="author">名前 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" required="required"></p>
+<p class="comment-form-email"><label for="email">メール <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" required="required"></p>
+<p class="comment-form-url"><label for="url">サイト</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200"></p>
+<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"> <label for="wp-comment-cookies-consent">次回のコメントで使用するためブラウザーに自分の名前、メールアドレス、サイトを保存する。</label></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="コメントを送信"> <input type="hidden" name="comment_post_ID" value="582" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+</p>
+<p style="display: none !important;"><label>&#916;<textarea name="ak_hp_textarea" cols="45" rows="8" maxlength="100"></textarea></label><input type="hidden" id="ak_js" name="ak_js" value="58"><script>document.getElementById( "ak_js" ).setAttribute( "value", ( new Date() ).getTime() );</script></p>
+</form>	</div>
+<!-- #respond -->
+	</aside>
+</div>
+<!-- /.comment area -->
+
+
+  
+  
+</div>
+
+
+
+          </main>
+
+        <div id="sidebar" class="sidebar nwa cf" role="complementary">
+
+  <div class="ad-area no-icon ad-sidebar-top ad-auto ad-label-invisible cf" itemscope itemtype="https://schema.org/WPAdBlock">
+  <div class="ad-label" itemprop="name" data-nosnippet></div>
+  <div class="ad-wrap">
+    <div class="ad-responsive ad-usual">
+<!-- レスポンシブコード -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6714287536670840" data-ad-slot="9270363470" data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+          </div>
+
+</div>
+
+	<aside id="search-2" class="widget widget-sidebar widget-sidebar-standard widget_search"><form class="search-box input-box" method="get" action="https://blog.so-ta.net/">
+  <input type="text" placeholder="サイト内を検索" name="s" class="search-edit" aria-label="input" value="">
+  <button type="submit" class="search-submit" aria-label="button"><span class="fa fa-search" aria-hidden="true"></span></button>
+</form>
+</aside>
+		<aside id="recent-posts-2" class="widget widget-sidebar widget-sidebar-standard widget_recent_entries">
+		<h3 class="widget-sidebar-title widget-title">最近の投稿</h3>
+		<ul>
+											<li>
+					<a href="https://blog.so-ta.net/thesis-site/aws-static-site-sub-domain-https/">AWSで静的ウェブサイトを独自(サブ)ドメインのHTTPSで公開した話</a>
+									</li>
+											<li>
+					<a href="https://blog.so-ta.net/master-thesis/netlify-buildbot-node/">netlifyのbuild-imageでnodeがインストールできなかった話</a>
+									</li>
+											<li>
+					<a href="https://blog.so-ta.net/portfolio/googlo-subdomain-github-pages/">Googleドメインのサブドメインをgithub Pagesで利用する</a>
+									</li>
+											<li>
+					<a href="https://blog.so-ta.net/portfolio/react-github-pages-actions/">Reactアプリをgithub Pages, Actionsでデプロイ</a>
+									</li>
+											<li>
+					<a href="https://blog.so-ta.net/xenontext/electron-redux-devtools/" aria-current="page">electronでRedux DevToolsを使う!</a>
+									</li>
+					</ul>
+
+		</aside><aside id="categories-2" class="widget widget-sidebar widget-sidebar-standard widget_categories"><h3 class="widget-sidebar-title widget-title">カテゴリー</h3>
+			<ul>
+					<li class="cat-item cat-item-16">
+<a class="cf" href="https://blog.so-ta.net/category/docker/">docker</a>
+</li>
+	<li class="cat-item cat-item-8">
+<a class="cf" href="https://blog.so-ta.net/category/kubernetes/">kubernetes</a>
+</li>
+	<li class="cat-item cat-item-13">
+<a class="cf" href="https://blog.so-ta.net/category/react-js/">React.js</a>
+</li>
+	<li class="cat-item cat-item-9">
+<a class="cf" href="https://blog.so-ta.net/category/serverless/">serverless</a>
+</li>
+	<li class="cat-item cat-item-14">
+<a class="cf" href="https://blog.so-ta.net/category/xenontext/">XenonText</a>
+</li>
+	<li class="cat-item cat-item-18">
+<a class="cf" href="https://blog.so-ta.net/category/portfolio/">ポートフォリオ</a>
+</li>
+	<li class="cat-item cat-item-19">
+<a class="cf" href="https://blog.so-ta.net/category/master-thesis/">修士の研究</a>
+</li>
+	<li class="cat-item cat-item-21">
+<a class="cf" href="https://blog.so-ta.net/category/thesis-site/">卒業研究紹介サイト</a>
+</li>
+	<li class="cat-item cat-item-11">
+<a class="cf" href="https://blog.so-ta.net/category/missing-memo/">失敗メモ</a>
+</li>
+	<li class="cat-item cat-item-5">
+<a class="cf" href="https://blog.so-ta.net/category/set-up/">環境構築</a>
+</li>
+	<li class="cat-item cat-item-12">
+<a class="cf" href="https://blog.so-ta.net/category/play/">遊び</a>
+</li>
+	<li class="cat-item cat-item-4">
+<a class="cf" href="https://blog.so-ta.net/category/chat/">雑談</a>
+</li>
+			</ul>
+
+			</aside><aside id="author_box-2" class="widget widget-sidebar widget-sidebar-standard widget_author_box"><h3 class="widget-sidebar-title widget-title">プロフィール</h3>  <div class="author-box border-element no-icon cf">
+          <div class="author-widget-name">
+        この記事を書いた人      </div>
+        <figure class="author-thumb circle-image">
+      <img alt="渡辺爽太" src="https://blog.so-ta.net/wp/wp-content/uploads/2019/08/face3.png" class="avatar avatar-200 photo" height="200" width="200">    </figure>
+    <div class="author-content">
+      <div class="author-name">
+        <a rel="author" target="_blank" href="https://blog.so-ta.net/author/so-ta/" title="渡辺爽太 の投稿">渡辺爽太<span class="fa fa-external-link internal-icon anchor-icon"></span></a>      </div>
+      <div class="author-description">
+        <p>学部時代にクラウド, サーバレス系の研究をしていました.<br>
+最近はフロントエンドに手を出しています. </p>
+<p>つまりなんでもやってみたい人です.</p>
+
+      </div>
+            <div class="author-follows">
+        <!-- SNSページ -->
+<div class="sns-follow bc-brand-color fbc-hide sf-profile">
+
+    <div class="sns-follow-message">渡辺爽太をフォローする</div>
+    <div class="sns-follow-buttons sns-buttons">
+
+      <a href="https://portfolio.so-ta.net/" class="follow-button website-button website-follow-button-sq" target="_blank" title="著者サイト" rel="nofollow noopener noreferrer"><span class="icon-home-logo"></span></a>
+  
+      <a href="https://twitter.com/Sota___Watanabe" class="follow-button twitter-button twitter-follow-button-sq" target="_blank" title="Twitterをフォロー" rel="nofollow noopener noreferrer"><span class="icon-twitter-logo"></span></a>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <a href="https://github.com/sota-watanabe" class="follow-button github-button github-follow-button-sq" target="_blank" title="GitHubをフォロー" rel="nofollow noopener noreferrer"><span class="icon-github-logo"></span></a>
+  
+    
+  
+  
+  </div>
+<!-- /.sns-follow-buttons -->
+
+</div>
+<!-- /.sns-follow -->
+      </div>
+      
+    </div>
+  </div>
+</aside>
+  <div class="ad-area no-icon ad-sidebar-bottom ad-auto ad-label-invisible cf" itemscope itemtype="https://schema.org/WPAdBlock">
+  <div class="ad-label" itemprop="name" data-nosnippet></div>
+  <div class="ad-wrap">
+    <div class="ad-responsive ad-usual">
+<!-- レスポンシブコード -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6714287536670840" data-ad-slot="9270363470" data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+          </div>
+
+</div>
+
+  
+</div>
+
+      </div>
+
+    </div>
+
+    
+    
+    
+    <footer id="footer" class="footer footer-container nwa" itemscope itemtype="https://schema.org/WPFooter">
+
+      <div id="footer-in" class="footer-in wrap cf">
+
+        
+        
+        
+<div class="footer-bottom fdt-up-and-down fnm-text-width cf">
+  <div class="footer-bottom-logo">
+    <div class="logo logo-footer logo-text"><a href="https://blog.so-ta.net/" class="site-name site-name-text-link" itemprop="url"><span class="site-name-text" itemprop="name about">そーたの技術ブログ</span></a></div>  </div>
+
+  <div class="footer-bottom-content">
+     <nav id="navi-footer" class="navi-footer">
+  <div id="navi-footer-in" class="navi-footer-in">
+      </div>
+</nav>
+
+    <div class="source-org copyright">© 2019-2021 そーたの技術ブログ.</div>
+  </div>
+
+</div>
+
+      </div>
+
+    </footer>
+
+    
+    
+
+    
+
+<ul class="mobile-footer-menu-buttons mobile-menu-buttons">
+
+      
+
+    
+<!-- ホームボタン -->
+<li class="home-menu-button menu-button">
+  <a href="https://blog.so-ta.net/" class="menu-button-in">
+    <span class="home-menu-icon menu-icon">
+      <span class="fa fa-home" aria-hidden="true"></span>
+    </span>
+    <span class="home-menu-caption menu-caption">ホーム</span>
+  </a>
+</li>
+
+    
+<!-- 検索ボタン -->
+  <!-- 検索ボタン -->
+  <li class="search-menu-button menu-button">
+    <input id="search-menu-input" type="checkbox" class="display-none">
+    <label id="search-menu-open" class="menu-open menu-button-in" for="search-menu-input">
+      <span class="search-menu-icon menu-icon">
+        <span class="fa fa-search" aria-hidden="true"></span>
+      </span>
+      <span class="search-menu-caption menu-caption">検索</span>
+    </label>
+    <label class="display-none" id="search-menu-close" for="search-menu-input"></label>
+    <div id="search-menu-content" class="search-menu-content">
+      <form class="search-box input-box" method="get" action="https://blog.so-ta.net/">
+  <input type="text" placeholder="サイト内を検索" name="s" class="search-edit" aria-label="input" value="">
+  <button type="submit" class="search-submit" aria-label="button"><span class="fa fa-search" aria-hidden="true"></span></button>
+</form>
+    </div>
+  </li>
+
+    
+<!-- トップボタン -->
+<li class="top-menu-button menu-button">
+  <a class="go-to-top-common top-menu-a menu-button-in">
+    <span class="top-menu-icon menu-icon">
+      <span class="fa fa-arrow-up" aria-hidden="true"></span>
+    </span>
+    <span class="top-menu-caption menu-caption">トップ</span>
+  </a>
+</li>
+
+    
+<!-- サイドバーボタン -->
+  <li class="sidebar-menu-button menu-button">
+    <input id="sidebar-menu-input" type="checkbox" class="display-none">
+    <label id="sidebar-menu-open" class="menu-open menu-button-in" for="sidebar-menu-input">
+      <span class="sidebar-menu-icon menu-icon">
+        <span class="fa fa-outdent" aria-hidden="true"></span>
+      </span>
+      <span class="sidebar-menu-caption menu-caption">サイドバー</span>
+    </label>
+    <label class="display-none" id="sidebar-menu-close" for="sidebar-menu-input"></label>
+    <div id="sidebar-menu-content" class="sidebar-menu-content menu-content">
+      <label class="sidebar-menu-close-button menu-close-button" for="sidebar-menu-input"><span class="fa fa-close" aria-hidden="true"></span></label>
+      <div id="slide-in-sidebar" class="sidebar nwa cf" role="complementary">
+
+  <div class="ad-area no-icon ad-sidebar-top ad-auto ad-label-invisible cf" itemscope itemtype="https://schema.org/WPAdBlock">
+  <div class="ad-label" itemprop="name" data-nosnippet></div>
+  <div class="ad-wrap">
+    <div class="ad-responsive ad-usual">
+<!-- レスポンシブコード -->
+
+</div>
+          </div>
+
+</div>
+
+	<aside id="slide-in-search-2" class="widget widget-sidebar widget-sidebar-standard widget_search"><form class="search-box input-box" method="get" action="https://blog.so-ta.net/">
+  <input type="text" placeholder="サイト内を検索" name="s" class="search-edit" aria-label="input" value="">
+  <button type="submit" class="search-submit" aria-label="button"><span class="fa fa-search" aria-hidden="true"></span></button>
+</form>
+</aside>
+		<aside id="slide-in-recent-posts-2" class="widget widget-sidebar widget-sidebar-standard widget_recent_entries">
+		<h3 class="widget-sidebar-title widget-title">最近の投稿</h3>
+		<ul>
+											<li>
+					<a href="https://blog.so-ta.net/thesis-site/aws-static-site-sub-domain-https/">AWSで静的ウェブサイトを独自(サブ)ドメインのHTTPSで公開した話</a>
+									</li>
+											<li>
+					<a href="https://blog.so-ta.net/master-thesis/netlify-buildbot-node/">netlifyのbuild-imageでnodeがインストールできなかった話</a>
+									</li>
+											<li>
+					<a href="https://blog.so-ta.net/portfolio/googlo-subdomain-github-pages/">Googleドメインのサブドメインをgithub Pagesで利用する</a>
+									</li>
+											<li>
+					<a href="https://blog.so-ta.net/portfolio/react-github-pages-actions/">Reactアプリをgithub Pages, Actionsでデプロイ</a>
+									</li>
+											<li>
+					<a href="https://blog.so-ta.net/xenontext/electron-redux-devtools/" aria-current="page">electronでRedux DevToolsを使う!</a>
+									</li>
+					</ul>
+
+		</aside><aside id="slide-in-categories-2" class="widget widget-sidebar widget-sidebar-standard widget_categories"><h3 class="widget-sidebar-title widget-title">カテゴリー</h3>
+			<ul>
+					<li class="cat-item cat-item-16">
+<a class="cf" href="https://blog.so-ta.net/category/docker/">docker</a>
+</li>
+	<li class="cat-item cat-item-8">
+<a class="cf" href="https://blog.so-ta.net/category/kubernetes/">kubernetes</a>
+</li>
+	<li class="cat-item cat-item-13">
+<a class="cf" href="https://blog.so-ta.net/category/react-js/">React.js</a>
+</li>
+	<li class="cat-item cat-item-9">
+<a class="cf" href="https://blog.so-ta.net/category/serverless/">serverless</a>
+</li>
+	<li class="cat-item cat-item-14">
+<a class="cf" href="https://blog.so-ta.net/category/xenontext/">XenonText</a>
+</li>
+	<li class="cat-item cat-item-18">
+<a class="cf" href="https://blog.so-ta.net/category/portfolio/">ポートフォリオ</a>
+</li>
+	<li class="cat-item cat-item-19">
+<a class="cf" href="https://blog.so-ta.net/category/master-thesis/">修士の研究</a>
+</li>
+	<li class="cat-item cat-item-21">
+<a class="cf" href="https://blog.so-ta.net/category/thesis-site/">卒業研究紹介サイト</a>
+</li>
+	<li class="cat-item cat-item-11">
+<a class="cf" href="https://blog.so-ta.net/category/missing-memo/">失敗メモ</a>
+</li>
+	<li class="cat-item cat-item-5">
+<a class="cf" href="https://blog.so-ta.net/category/set-up/">環境構築</a>
+</li>
+	<li class="cat-item cat-item-12">
+<a class="cf" href="https://blog.so-ta.net/category/play/">遊び</a>
+</li>
+	<li class="cat-item cat-item-4">
+<a class="cf" href="https://blog.so-ta.net/category/chat/">雑談</a>
+</li>
+			</ul>
+
+			</aside><aside id="slide-in-author_box-2" class="widget widget-sidebar widget-sidebar-standard widget_author_box"><h3 class="widget-sidebar-title widget-title">プロフィール</h3>  <div class="author-box border-element no-icon cf">
+          <div class="author-widget-name">
+        この記事を書いた人      </div>
+        <figure class="author-thumb circle-image">
+      <img alt="渡辺爽太" src="https://blog.so-ta.net/wp/wp-content/uploads/2019/08/face3.png" class="avatar avatar-200 photo" height="200" width="200">    </figure>
+    <div class="author-content">
+      <div class="author-name">
+        <a rel="author" target="_blank" href="https://blog.so-ta.net/author/so-ta/" title="渡辺爽太 の投稿">渡辺爽太<span class="fa fa-external-link internal-icon anchor-icon"></span></a>      </div>
+      <div class="author-description">
+        <p>学部時代にクラウド, サーバレス系の研究をしていました.<br>
+最近はフロントエンドに手を出しています. </p>
+<p>つまりなんでもやってみたい人です.</p>
+
+      </div>
+            <div class="author-follows">
+        <!-- SNSページ -->
+<div class="sns-follow bc-brand-color fbc-hide sf-profile">
+
+    <div class="sns-follow-message">渡辺爽太をフォローする</div>
+    <div class="sns-follow-buttons sns-buttons">
+
+      <a href="https://portfolio.so-ta.net/" class="follow-button website-button website-follow-button-sq" target="_blank" title="著者サイト" rel="nofollow noopener noreferrer"><span class="icon-home-logo"></span></a>
+  
+      <a href="https://twitter.com/Sota___Watanabe" class="follow-button twitter-button twitter-follow-button-sq" target="_blank" title="Twitterをフォロー" rel="nofollow noopener noreferrer"><span class="icon-twitter-logo"></span></a>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <a href="https://github.com/sota-watanabe" class="follow-button github-button github-follow-button-sq" target="_blank" title="GitHubをフォロー" rel="nofollow noopener noreferrer"><span class="icon-github-logo"></span></a>
+  
+    
+  
+  
+  </div>
+<!-- /.sns-follow-buttons -->
+
+</div>
+<!-- /.sns-follow -->
+      </div>
+      
+    </div>
+  </div>
+</aside>
+  <div class="ad-area no-icon ad-sidebar-bottom ad-auto ad-label-invisible cf" itemscope itemtype="https://schema.org/WPAdBlock">
+  <div class="ad-label" itemprop="name" data-nosnippet></div>
+  <div class="ad-wrap">
+    <div class="ad-responsive ad-usual">
+<!-- レスポンシブコード -->
+
+</div>
+          </div>
+
+</div>
+
+  
+</div>
+    </div>
+  </li>
+  
+</ul>
+
+
+
+    <div id="go-to-top" class="go-to-top">
+      <a class="go-to-top-button go-to-top-common go-to-top-hide go-to-top-button-icon-font"><span class="fa fa-angle-double-up"></span></a>
+  </div>
+
+    <script src="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/plugins/highlight-js/highlight.all.min.js?ver=5.5.7&#038;fver=20201017121916" id="code-highlight-js-js"></script>
+<script id="code-highlight-js-js-after">
+(function($){$(".entry-content pre").each(function(i,block){hljs.highlightBlock(block)})})(jQuery);
+</script>
+<script src="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/plugins/baguettebox/dist/baguetteBox.min.js?ver=5.5.7&#038;fver=20201017121916" id="baguettebox-js-js"></script>
+<script id="baguettebox-js-js-after">
+(function($){baguetteBox.run(".entry-content")})(jQuery);
+</script>
+<script src="https://blog.so-ta.net/wp/wp-includes/js/comment-reply.min.js?ver=5.5.7&#038;fver=20210415072144" id="comment-reply-js"></script>
+<script id="cocoon-js-js-extra">
+/* <![CDATA[ */
+var cocoon_localize_script_options = {"is_lazy_load_enable":null,"is_fixed_mobile_buttons_enable":"","is_google_font_lazy_load_enable":null};
+/* ]]> */
+</script>
+<script src="https://blog.so-ta.net/wp/wp-content/themes/cocoon-master/javascript.js?ver=5.5.7&#038;fver=20201017121922" id="cocoon-js-js"></script>
+<script src="https://blog.so-ta.net/wp/wp-content/themes/cocoon-child-master/javascript.js?ver=5.5.7&#038;fver=20190803111808" id="cocoon-child-js-js"></script>
+
+    
+
+
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+  
+
+  
+
+    <div class="copy-info">タイトルとURLをコピーしました</div>
+  <script src="//cdn.jsdelivr.net/clipboard.js/1.5.13/clipboard.min.js"></script>
+  <script>
+  (function($){
+    selector = '.copy-button';//clipboardで使う要素を指定
+    $(selector).click(function(event){
+      //クリック動作をキャンセル
+      event.preventDefault();
+      //クリップボード動作
+      var clipboard = new Clipboard(selector);
+      clipboard.on('success', function(e) {
+        $('.copy-info').fadeIn(500).delay(1000).fadeOut(500);
+
+        e.clearSelection();
+      });
+    });
+  })(jQuery);
+  </script>
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+  </div>
+<!-- #container -->
+
+    
+</body>
+
+</html>

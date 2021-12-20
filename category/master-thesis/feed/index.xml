@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>修士の研究  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/master-thesis/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Sun, 11 Oct 2020 08:34:54 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>修士の研究  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>netlifyのbuild-imageでnodeがインストールできなかった話</title>
+		<link>https://blog.so-ta.net/master-thesis/netlify-buildbot-node/</link>
+					<comments>https://blog.so-ta.net/master-thesis/netlify-buildbot-node/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Sun, 11 Oct 2020 08:18:20 +0000</pubDate>
+				<category><![CDATA[修士の研究]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=706</guid>
+
+					<description><![CDATA[はじめに 修士の研究のため、Netlifyのbuild-imageを使おうとしたけど、READMEの通りやってもうまくいかなかったのでメモ やりたいこと ここのREADMEのSTEP1, 2, 3がしたい。 現象 STE [&#8230;]]]></description>
+										<content:encoded><![CDATA[
+<h2>はじめに</h2>
+
+
+
+<p>修士の研究のため、Netlifyのbuild-imageを使おうとしたけど、READMEの通りやってもうまくいかなかったのでメモ</p>
+
+
+
+<h2>やりたいこと</h2>
+
+
+
+<p><a rel="noopener" target="_blank" href="https://github.com/netlify/build-image">ここ<span class="fa fa-external-link external-icon anchor-icon"></span></a>のREADMEのSTEP1, 2, 3がしたい。</p>
+
+
+
+<h2>現象</h2>
+
+
+
+<p>STEP1, 2は普通にできる。しかし、STEP3の</p>
+
+
+
+<pre class="wp-block-code bash"><code>/opt/build-bin/build npm run build</code></pre>
+
+
+
+<p>をするとこんな感じでエラーがでる。なんかnodeがインストールできないっぽい。</p>
+
+
+
+<pre class="wp-block-code"><code>buildbot@e759adb8d766:/$ ./opt/build-bin/build 
+Cloning into '/opt/buildhome/repo'...
+done.
+Installing dependencies
+Python version set to 2.7
+Version '12.18.0' not found - try `nvm ls-remote` to browse available versions.
+Failed to install node version '12.18.0'
+buildbot@e759adb8d766:/$ </code></pre>
+
+
+
+<h2>対処までの道のり</h2>
+
+
+
+<p>対処法だけくれ！って人は<a href="#approach">スキップ</a></p>
+
+
+
+<h3>実行しているファイル</h3>
+
+
+
+<p>今回実行しているファイルはコマンドの通り、/opt/build-bin/build</p>
+
+
+
+<p>ただ、このファイルはコンテナを起動する時にローカルからマウントしているファイルです。</p>
+
+
+
+<p>その証拠はSTEP2でコンテナを起動するときの/.test-tools/start-image.shに書いてあります。</p>
+
+
+
+<p>start-image.sh (一部抜粋) </p>
+
+
+
+<pre class="wp-block-code bash"><code>docker run --rm -t -i \
+	-e NODE_VERSION \
+	-e NPM_VERSION \
+	-e RUBY_VERSION \
+	-e YARN_VERSION \
+	-e HUGO_VERSION \
+	-e PHP_VERSION \
+	-e GO_VERSION \
+	-e SWIFT_VERSION \
+	-e PYTHON_VERSION \
+	-v ${REPO_PATH}:/opt/repo \
+	-v ${BASE_PATH}/run-build.sh:/opt/build-bin/build \
+	-v ${BASE_PATH}/run-build-functions.sh:/opt/build-bin/run-build-functions.sh \
+	$NETLIFY_IMAGE /bin/bash</code></pre>
+
+
+
+<p>docker run のvオプションで${BASE_PATH}/run-build.shを/opt/build-bin/buildにマウントしていることがわかる。</p>
+
+
+
+<p>よってrun-build.shをみれば良さそう。</p>
+
+
+
+<h3>run-build.sh でやってること</h3>
+
+
+
+<pre class="wp-block-code"><code>#!/bin/bash
+
+dir="$(dirname "$0")"
+: ${NETLIFY_REPO_URL="/opt/repo"}
+NETLIFY_BUILD_BASE="/opt/buildhome"
+
+cmd=$*
+
+BUILD_COMMAND_PARSER=$(cat &lt;&lt;EOF
+$cmd
+EOF
+)
+
+. "$dir/run-build-functions.sh"
+
+if &#91;&#91; ! -d $NETLIFY_REPO_DIR ]]; then
+  git clone $NETLIFY_REPO_URL $NETLIFY_REPO_DIR
+fi
+cd $NETLIFY_REPO_DIR
+
+: ${NODE_VERSION="12.18.0"}
+: ${RUBY_VERSION="2.7.1"}
+: ${YARN_VERSION="1.22.4"}
+: ${PHP_VERSION="5.6"}
+: ${GO_VERSION="1.14.4"}
+: ${SWIFT_VERSION="5.2"}
+: ${PYTHON_VERSION="2.7"}
+
+echo "Installing dependencies"
+install_dependencies $NODE_VERSION $RUBY_VERSION $YARN_VERSION $PHP_VERSION $GO_VERSION $SWIFT_VERSION $PYTHON_VERSION
+
+echo "Installing missing commands"
+install_missing_commands
+
+echo "Verify run directory"
+set_go_import_path
+
+echo "Executing user command: $cmd"
+eval "$cmd"
+CODE=$?
+
+exit $CODE</code></pre>
+
+
+
+<p>おもにインストールをやってるっぽい。具体的にはinstall_dependenciesでインストールしている。</p>
+
+
+
+<p>install_dependenciesは既存の関数ではなく、<code>. "$dir/run-build-functions.sh"</code></p>
+
+
+
+<p>で定義した関数なのでrun-build-functions.shをみる。</p>
+
+
+
+<p>run-build-functions.sh (一部抜粋)</p>
+
+
+
+<pre class="wp-block-code"><code>  if nvm install --no-progress $NODE_VERSION
+  then
+    NODE_VERSION=$(nvm current)
+    # no echo needed because nvm does that for us
+    export NODE_VERSION=$NODE_VERSION
+
+    if &#91; "$NODE_VERSION" == "none" ]
+    then
+      nvm debug
+      env
+    fi
+  else
+    echo "Failed to install node version '$NODE_VERSION'"
+    exit 1
+  fi</code></pre>
+
+
+
+<p>多分ここだ。エラー文のFailed to ~もあるし。</p>
+
+
+
+<p>nvm install でインストールして失敗してるんだな。なんでだろ。</p>
+
+
+
+<p>エラーログに　nvm ls-remoteしてみてって言われてたから、付け加えてみるか。</p>
+
+
+
+<p>変更後 run-build-functions.sh (一部抜粋)</p>
+
+
+
+<pre class="wp-block-code"><code>  nvm ls-remote &lt;-NEW!!
+  if nvm install --no-progress $NODE_VERSION
+  then
+    NODE_VERSION=$(nvm current)
+    # no echo needed because nvm does that for us
+    export NODE_VERSION=$NODE_VERSION
+
+    if &#91; "$NODE_VERSION" == "none" ]
+    then
+      nvm debug
+      env
+    fi
+  else
+    echo "Failed to install node version '$NODE_VERSION'"
+    exit 1
+  fi</code></pre>
+
+
+
+<p>これでSTEP2, 3 をやってみた。</p>
+
+
+
+<p>結果</p>
+
+
+
+<pre class="wp-block-code"><code>buildbot@db733d62c389:/$ /opt/build-bin/build 
+Cloning into '/opt/buildhome/repo'...
+done.
+Installing dependencies
+Python version set to 2.7
+            N/A
+Version '12.18.0' not found - try `nvm ls-remote` to browse available versions.
+Failed to install node version '12.18.0'
+buildbot@db733d62c389:/$ </code></pre>
+
+
+
+<p>N/A &#8230;         N/A !?</p>
+
+
+
+<h3>コンテナのDNS</h3>
+
+
+
+<p>N/Aってことはコンテナ内から通信できてないってことか？</p>
+
+
+
+<p>通信できているか確認のため、curlをしてみた。</p>
+
+
+
+<pre class="wp-block-code"><code>buildbot@db733d62c389:/$ curl google.com
+curl: (6) Could not resolve host: google.com
+buildbot@db733d62c389:/$ </code></pre>
+
+
+
+<p>DNSが設定できて無いじゃん多分。</p>
+
+
+
+<p><a target="_blank" href="https://blog.so-ta.net/missing-memo/dial-tcp-lookup-index-docker-io-no-make-container/">前も似たようなこと<span class="fa fa-external-link internal-icon anchor-icon"></span></a>があったのでピンときた。</p>
+
+
+
+<p>よってコンテナのDNSを指定すればいいことがわかった。</p>
+
+
+
+<h2 id="approach">対処法</h2>
+
+
+
+<p>test-tools/start-image.shにresolv.confマウントを追加する</p>
+
+
+
+<pre class="wp-block-code"><code>docker run --rm -t -i \
+	-e NODE_VERSION \
+	-e NPM_VERSION \
+	-e RUBY_VERSION \
+	-e YARN_VERSION \
+	-e HUGO_VERSION \
+	-e PHP_VERSION \
+	-e GO_VERSION \
+	-e SWIFT_VERSION \
+	-e PYTHON_VERSION \
+	-v ${REPO_PATH}:/opt/repo \
+	-v ${BASE_PATH}/run-build.sh:/opt/build-bin/build \
+	-v ${BASE_PATH}/run-build-functions.sh:/opt/build-bin/run-build-functions.sh \
+	-v /etc/resolv.conf:/etc/resolv.conf \ &lt;- NEW!!
+	$NETLIFY_IMAGE /bin/bash</code></pre>
+
+
+
+<p>ローカルのresolv.confをコンテナ内にもマウントすることでコンテナもローカルと同じDNSを使えるようになる。これでcurl も問題なく動くようになるし、nodeもちゃんとインストールできるようになる。</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/master-thesis/netlify-buildbot-node/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

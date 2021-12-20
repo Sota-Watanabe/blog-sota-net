@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>XenonText  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/xenontext/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Wed, 19 Aug 2020 13:07:58 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>XenonText  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>electronでRedux DevToolsを使う!</title>
+		<link>https://blog.so-ta.net/xenontext/electron-redux-devtools/</link>
+					<comments>https://blog.so-ta.net/xenontext/electron-redux-devtools/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Wed, 19 Aug 2020 13:07:58 +0000</pubDate>
+				<category><![CDATA[XenonText]]></category>
+		<category><![CDATA[React.js]]></category>
+		<category><![CDATA[redux]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=582</guid>
+
+					<description><![CDATA[はじめに electron と Reduxを使ってエディタを作成しているんですが, やっぱり動的にReduxを操作したいってことでRedux DevTools Extension を使用することにしました. ついでにRe [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>electron と Reduxを使ってエディタを作成しているんですが,<br />
+やっぱり動的にReduxを操作したいってことでRedux DevTools Extension<br />
+を使用することにしました. ついでにReactのDevToolsも入れます.<br />
+electronを使った場合が日本語であまりなかったので紹介します.</p>
+<h2>前提</h2>
+<p>electron, Reduxを使っている前提とします(当然ですが)</p>
+<h2>手順</h2>
+<p>まず, <a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://github.com/MarshallOfSound/electron-devtools-installer">electron-devtools-installer<span class="fa fa-external-link external-icon anchor-icon"></span></a>を入れましょう.</p>
+<pre><code class="language-bash line-numbers">npm install electron-devtools-installer --save-dev
+</code></pre>
+<p>or</p>
+<pre><code class="language-bash line-numbers">yarn add electron-devtools-installer -D
+</code></pre>
+<p>次にメインプロセスの部分に以下のように追加します.</p>
+<pre><code class="language-javascript line-numbers">//index.js
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} from 'electron-devtools-installer';
+
+...
+...
+...
+//electronを起動時にDevToolsを開く(これ便利だからおすすめ)
+win.webContents.openDevTools();
+
+installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+.then((name) =&gt; console.log(name))
+.catch((err) =&gt; console.log(err));
+</code></pre>
+<p>これで以下のようにReduxとReactのDevToolsが入りました!</p>
+<p><img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/redux_tab.png" alt="" /></p>
+<p>しかしReduxの方をみてみるとなんか言われています&#8230;<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/no_store.png" alt="" /><br />
+「ストアがみつかんないよ!!」</p>
+<p>というわけでストアを接続してあげましょう.</p>
+<p>ストアを作成しているところをみてください.<br />
+一般にcreateStore関数があるところです.</p>
+<pre><code class="language-javascript line-numbers"> const store = createStore(
+   reducer,
+   // 以下を追加
+   window.__REDUX_DEVTOOLS_EXTENSION__&amp;&amp; window.__REDUX_DEVTOOLS_EXTENSION__()
+ );
+</code></pre>
+<p>window〜を追加してください. これでストアを接続できました.</p>
+<h3>とらゼミの場合</h3>
+<p>この節はトラハックのエンジニア学習ゼミ【とらゼミ】の<a rel="noopener" target="_blank" class="wp-editor-md-post-content-link" href="https://www.youtube.com/watch?v=FBMA34gUsgw&amp;list=PLX8Rsrpnn3IWavNOj3n4Vypzwb3q1RXhr">日本一わかりやすいReact-Redux入門<br />
+<span class="fa fa-external-link external-icon anchor-icon"></span></a>で勉強した方向けになります. 対象でない方はスキップしてください. m(_ _)m</p>
+<p>とらゼミではreduxのcreateStoreをreduxCreateStoreという名前でimportしていました.</p>
+<pre><code class="language-javascript line-numbers">//store.js
+import { combineReducers, createStore as reduxCreateStore } from 'redux';
+import EditorReducer from '../editor/reducers';
+
+export default function createStore() {
+  return reduxCreateStore(
+    combineReducers({
+      editor: EditorReducer,
+    }),
+      // 以下に追加
+    window.__REDUX_DEVTOOLS_EXTENSION__ &amp;&amp;
+      window.__REDUX_DEVTOOLS_EXTENSION__(),
+  );
+}
+
+</code></pre>
+<p>これはなぜかというと他の場所(index.jsx)でcreateStore関数をつかってストアを作成したかったからです.<br />
+よってwindow〜を追加する場所は上記のようにstore.jsの中になります.</p>
+<h2>結果</h2>
+<p>以下のようになったら完了です.<br />
+<img src="https://blog.so-ta.net/wp/wp-content/uploads/2020/08/スクリーンショット-2020-08-19-0.35.43.png" alt="" /></p>
+<h2>おわりに</h2>
+<p>Let&#8217;s Redux!!</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/xenontext/electron-redux-devtools/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

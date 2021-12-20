@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>docker  |  そーたの技術ブログ</title>
+	<atom:link href="https://blog.so-ta.net/category/docker/feed/" rel="self" type="application/rss+xml" />
+	<link>https://blog.so-ta.net/</link>
+	<description>ハマったことをまとめる</description>
+	<lastBuildDate>Wed, 19 Aug 2020 13:09:27 +0000</lastBuildDate>
+	<language>ja</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.5.7</generator>
+
+<image>
+	<url>https://blog.so-ta.net/wp/wp-content/uploads/2019/08/cropped-face3-32x32.png</url>
+	<title>docker  |  そーたの技術ブログ</title>
+	<link>https://blog.so-ta.net/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>【独断】dockerの1番便利な使い方!!!</title>
+		<link>https://blog.so-ta.net/docker/best-useful-method/</link>
+					<comments>https://blog.so-ta.net/docker/best-useful-method/#respond</comments>
+		
+		<dc:creator><![CDATA[渡辺爽太]]></dc:creator>
+		<pubDate>Wed, 08 Jul 2020 10:45:19 +0000</pubDate>
+				<category><![CDATA[docker]]></category>
+		<guid isPermaLink="false">https://blog.so-ta.net/?p=419</guid>
+
+					<description><![CDATA[はじめに dockerにはいろいろな使い方があります. 常につけっぱにするサーバとしてだったり, 仲間と全く同じの環境を作成するためだったり, 色々です. しかし一方で「サーバ？別にレンタルサーバだから要らないし&#82 [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>はじめに</h2>
+<p>dockerにはいろいろな使い方があります. 常につけっぱにするサーバとしてだったり, 仲間と全く同じの環境を作成するためだったり, 色々です.</p>
+<p>しかし一方で「サーバ？別にレンタルサーバだから要らないし&#8230;」「チーム開発あんまりやらない」という人もいると思います.</p>
+<p>今回はdocker歴1年の僕が1番便利だと感じたdockerの使い方について紹介します.</p>
+<p>この方法は誰でも使う余地があると思いますので是非, 試してみてください!!</p>
+<h2>環境</h2>
+<p>windows Linux MacOS &#8230; dockerが動く環境全て</p>
+<h2>目的</h2>
+<p>&#8230;で前振りはいいから結局何すんの?って話なんですが,<br />
+dockerでほぼ全ての環境を構築をしましょう.</p>
+<p>それこそ最近はオンライン授業で自分のPCに環境を作ってくださいとか言われるかもしれません.<br />
+そういう先生に是非言いたい! dockerでやりましょうと.</p>
+<p>ということで今回はdockerで環境構築をするのが目的です.<br />
+具体例をみていきましょう.</p>
+<h2>使い方</h2>
+<h3>ストーリー</h3>
+<p>授業でC言語のプログラムを作ってこいと言われた<br />
+C言語の環境ってどうやるの? gcc?なにそれ, 怖いから直接PCに入れたくない!<br />
+そこでdockerです.</p>
+<pre><code class="language-bash line-numbers">docker run --rm -it -v $PWD:/workdir gcc bash
+</code></pre>
+<p>このコマンドを打つだけでC言語が動く環境ができました!</p>
+<h3>手順</h3>
+<h4>コンテナイメージを決定する</h4>
+<p>まず, 利用するコンテナイメージをググって決定します.<br />
+僕は以下のイメージをよく利用しています.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">言語</th>
+<th style="text-align: center;">イメージ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">C言語</td>
+<td style="text-align: center;">gcc</td>
+</tr>
+<tr>
+<td style="text-align: center;">java</td>
+<td style="text-align: center;">openjdk</td>
+</tr>
+<tr>
+<td style="text-align: center;">python</td>
+<td style="text-align: center;">python</td>
+</tr>
+<tr>
+<td style="text-align: center;">Go言語</td>
+<td style="text-align: center;">golang</td>
+</tr>
+</tbody>
+</table>
+<h4>コンテナを起動する</h4>
+<p>先に見たコマンドを使ってコンテナを起動しましょう.<br />
+今回はカレントディレクトリと/workdirをマウントしてgccイメージのコンテナを起動します.</p>
+<pre><code class="language-bash line-numbers">docker run --rm -it -v $PWD:/workdir gcc bash
+</code></pre>
+<h4>コンテナ内で操作する</h4>
+<p>コマンドを打つとコンテナ内に入れたと思います.<br />
+それでは「cd /workdir」で正しくマウントできているか確認してください.<br />
+あとは通常通り操作するだけです. 例としてgccの場合は以下のようにして実行します.</p>
+<pre><code class="language-bash line-numbers">gcc &lt;ファイル名&gt;.c &amp;&amp; ./a.out
+</code></pre>
+<p>使い終わったら</p>
+<pre><code class="language-bash line-numbers">exit
+</code></pre>
+<p>でコンテナから出ます.</p>
+<p>それでは利用したコマンドについて説明していきます.</p>
+<h2>解説</h2>
+<p>このコマンドでやっていることは大きく分けて5つです.</p>
+<ol>
+<li>イメージを指定してコンテナ起動</li>
+<li>終了時コンテナ自動破棄オプション</li>
+<li>コンテナ内を操作するオプション</li>
+<li>マウントオプション</li>
+<li>シェルの指定</li>
+</ol>
+<p>それぞれ見ていきましょう!</p>
+<h3>イメージを指定してコンテナ起動</h3>
+<pre><code>docker run <コンテナイメージ></code></pre>
+<p>コンテナイメージを指定してコンテナを起動します.<br />
+コンテナイメージとはコンテナを作成するときの元となるものです.<br />
+よくクラスとインスタンスの関係で例えられます.</p>
+<ul>
+<li>クラス -> コンテナイメージ</li>
+<li>インスタンス -> コンテナ</li>
+</ul>
+<p>またコンテナイメージがローカルにない場合は自動でdocker hubからpullします.</p>
+<h3>終了時コンテナ自動破棄オプション(&#8211;rm)</h3>
+<pre><code>docker run --rm <コンテナイメージ></code></pre>
+<p>コンテナがストップしたときに, 自動でコンテナとコンテナに関連するvolumeを削除するというオプションです. これがないとコンテナを破棄してもvolumeの繋がりが残ってしまい, 無駄にメモリ消費を消費してしまうことがあります.</p>
+<h3>コンテナ内を操作するオプション(-it)</h3>
+<pre><code>docker run -it <コンテナイメージ></code></pre>
+<p>正確にはiオプションが標準入力を開けるもの, tオプションが擬似端末を割り当てるオプションです.<br />
+しかし実際ほとんど一緒に使われるので -it でコンテナ操作できるオプションと覚えていいと思います.</p>
+<h3>マウントオプション(-v)</h3>
+<pre><code>docker run -v $PWD:/workdir <コンテナイメージ></code></pre>
+<p>ホストOSのディレクリとコンテナ内のディレクトリをつなげるオプションです.<br />
+この例だと$PWDとコンテナ内のルートディレクトリにあるworkdirディレクトリを繋げます.<br />
+$PWDはprint working directoryの略で今開いているディレクトリへのパスです.<br />
+具体的になんなの?という人は端末を開いて「echo $PWD」と打って試してみてください.</p>
+<h3>コンテナ内を操作するシェル指定(bash)</h3>
+<pre><code>docker run -it <コンテナイメージ> bash</code></pre>
+<p>itオプションで開くときのシェルをbashに指定します.</p>
+<h2>おわりに</h2>
+<p>dockerを使えば簡単に環境構築ができます.<br />
+是非, お試しあれ!!</p>
+<h2>参考</h2>
+<a rel="noopener" target="_blank" href="https://www.docker.com/" title="Empowering App Development for Developers | Docker" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/de71493281044d99204e6c61e2742e2a.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">Empowering App Development for Developers | Docker</div><div class="blogcard-snippet external-blogcard-snippet">Learn how Docker helps developers bring their ideas to life by conquering the complexity of app development.</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=www.docker.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">www.docker.com</div></div></div></div></a>
+<a rel="noopener" target="_blank" href="https://stlisacity.hatenablog.com/entry/2018/09/10/145101" title="DockerのVolumeに関して -v --rm -d ゴミが残る問題 コンテナが起動しない - ちょこっとプログラミング" class="blogcard-wrap external-blogcard-wrap a-wrap cf"><div class="blogcard external-blogcard eb-left cf"><div class="blogcard-label external-blogcard-label"><span class="fa"></span></div><figure class="blogcard-thumbnail external-blogcard-thumbnail"><img src="https://blog.so-ta.net/wp/wp-content/uploads/cocoon-resources/blog-card-cache/a48380381db6e68f2a5becb385002176.png" alt="" class="blogcard-thumb-image external-blogcard-thumb-image" width="160" height="90" /></figure><div class="blogcard-content external-blogcard-content"><div class="blogcard-title external-blogcard-title">DockerのVolumeに関して -v --rm -d ゴミが残る問題 コンテナが起動しない - ちょこっとプログラミング</div><div class="blogcard-snippet external-blogcard-snippet">最近Dockerを使い始めたのですが、一つ躓いたのでメモ。Dockerのコンテナを立上げる時、コンテナとは別に実は裏でボリュームと言う物も立ち上がっています。 （立上げる時に使うイメージによって違うかもしれませんがMysqlを立上げたら勝手に立ち上がるのは確認済みです） イメージ的にはこんな感じです: 公式ドキュメント...</div></div><div class="blogcard-footer external-blogcard-footer cf"><div class="blogcard-site external-blogcard-site"><div class="blogcard-favicon external-blogcard-favicon"><img src="https://www.google.com/s2/favicons?domain=stlisacity.hatenablog.com" alt="" class="blogcard-favicon-image external-blogcard-favicon-image" width="16" height="16" /></div><div class="blogcard-domain external-blogcard-domain">stlisacity.hatenablog.com</div></div></div></div></a>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://blog.so-ta.net/docker/best-useful-method/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>
